@@ -11,6 +11,8 @@ export const ModelProvider = () => {
         setIsMounted(true)
     }, [])
 
+    if(!isMounted) return null;
+
     return (
         <>
             <CreateServerModel/>

@@ -67,6 +67,7 @@ export const createServer = mutation({
     },
 });
 
+
 export const getAllServersByProfileId = query({
   args: {
       profileId: v.string(),
@@ -90,7 +91,6 @@ export const getAllServersByProfileId = query({
   },
 });
 
-
 export const getAllServers = query({
     args: {},
     handler: async (ctx) => {
@@ -112,7 +112,7 @@ export const getServerAndChannelsWithId = query({
       .first(); // Use first() instead of collect() to get a single server
 
       if (!server || !server.members || !server.members.includes(profileId)) {
-        throw new Error("Server not found or you do not have access to it.");
+        return { server: null }; // Return null if the server doesn't exist or the profile isn't a member
       }
 
       // Fetch channels associated with the server
