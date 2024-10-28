@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react"
 import CreateServerModel from "../models/create-server-model"
+import InviteModel from "../models/invite-model"
+import EditServerModel from "../models/edit-server-model"
 
 
 export const ModelProvider = () => {
@@ -16,9 +18,9 @@ export const ModelProvider = () => {
     return (
         <>
             <CreateServerModel/>
-            {/* <JoinServerModel/>
             <InviteModel/>
             <EditServerModel/>
+            {/* <JoinServerModel/>
             <MembersModel/>
             <CreateChannelModel/>
             <LeaveServerModel />

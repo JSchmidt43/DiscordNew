@@ -1,4 +1,4 @@
-import { Server, Channel, Profile, Message, Member } from "@/types";
+import { Server, Channel, Profile, Message, Member, ServerWithChannelsWithMembers, ServerWithMembersWithProfiles } from "@/types";
 import { create } from "zustand"
 
 export type ModelType = "createServer" | "invite" | "editServer" 
@@ -7,9 +7,6 @@ export type ModelType = "createServer" | "invite" | "editServer"
 
 interface ModelData {
     server?: Server;
-    // serverChData?: ServerWithChannelsWithMembers;
-    // serverMpData?: ServerWithMembersWithProfiles;
-    channel?:Channel;
     // channelType?: ChannelType,
     apiUrl?: string,
     query?: Record<string,any>
@@ -29,6 +26,6 @@ export const useModel = create<ModelStore>((set) => ({
     data: {},
     isOpen: false,
     userData: undefined,
-    onOpen:(type, data = {}) => set({ isOpen:true, type, data}),
+    onOpen:(type, data = {}) => set({ isOpen: true, type, data}),
     onClose: () => set({ type: null, isOpen: false})
 }))

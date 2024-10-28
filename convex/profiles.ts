@@ -69,6 +69,33 @@ export const updateProfileById = mutation({
   },
 });
 
+export const updateStatusByUserId = mutation({
+  args: { 
+    userId: v.string(), 
+    status: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Retrieve a profile by userId field
+    const profile = await getProfileByUserId(ctx, { userId: args.userId });
+
+    if(!profile) {
+      return { error: 'Profile not found' };
+    }
+
+    const updates : any = {};
+
+    // Collect the fields that are provided and should be updated
+    if (args.status !== undefined) updates.status = args.status;
+
+    updates.updatedAt = Date.now();
+    // Update the profile with the new fields
+    await ctx.db.patch(profile._id, updates);
+    
+    const updatedProfile = await getProfileById(ctx, { profileId: profile._id });
+    return updatedProfile;
+  },
+});
+
 export const deleteProfileById = mutation({
   args: { id: v.string() },
   handler: async (ctx, { id }) => {
@@ -99,8 +126,33 @@ export const getProfileById = query({
   handler: async (ctx, { profileId }) => {
     const profile = await ctx.db.query('profiles')
       .filter(q => q.eq(q.field('_id'), profileId))
-      .first(); // Retrieve a single channel
+      .first(); // Retrieve a single profile
     return profile;
+  },
+});
+
+export const get_profiles_By_Ids = query({
+  args: {
+    profileIds: v.array(v.string()), // Accepts an array of profile IDs as input
+  },
+  handler: async (ctx, { profileIds }) => {
+    if (profileIds.length === 0){
+      return ["NONE"]
+    }
+
+     // Use map to create an array of promises
+     const profilePromises = profileIds.map(async (profileId) => {
+      const profile = await ctx.db.query('profiles')
+        .filter(q => q.eq(q.field('_id'), profileId))
+        .first(); // Retrieve a single profile
+      return profile; // Return the profile (or null if not found)
+    });
+
+    // Wait for all promises to resolve
+    const profiles = await Promise.all(profilePromises);
+
+    return profiles;
+
   },
 });
 
