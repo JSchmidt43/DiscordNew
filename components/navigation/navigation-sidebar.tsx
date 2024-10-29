@@ -26,9 +26,9 @@ export const NavigationSideBar = ({ profileId }: { profileId : string}) => {
                 {servers?.map((server)=> (
                     <div key={server?._id}>
                         <NavigationItem
-                        id={server!._id}
-                        name={server!.name}
-                        imageUrl={server!.imageUrl} />
+                        id={server?._id}
+                        name={server?.name}
+                        imageUrl={server?.imageUrl} />
                     </div>
                 ))}
              <NavigationAction />

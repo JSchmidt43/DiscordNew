@@ -1,6 +1,9 @@
 import ServerSidebar from "@/components/servers/server-sidebar";
+import { api } from "@/convex/_generated/api";
+import { getAllServersByProfileId } from "@/convex/servers";
 import { currentProfile } from "@/lib/current-profile";
 import { auth } from "@clerk/nextjs/server";
+import { fetchQuery } from "convex/nextjs";
 import { redirect } from "next/navigation";
 
 const ServerIdLayout = async ({
@@ -17,10 +20,14 @@ const ServerIdLayout = async ({
     }
 
     // Check if the serverId exists in the profile.servers array
-    const serverIdExists = profile.servers.includes(params.serverId);
+    // const serverIdExists = profile.servers.includes(params.serverId);
+    const serverIdExists = await fetchQuery(api.servers.getAllServersByProfileId, {
+        profileId: profile._id
+    })
 
-    // If the serverId doesn't exist in profile.servers, redirect to the homepage
-    if (!serverIdExists) {
+    // // If the serverId doesn't exist in profile.servers, redirect to the homepage
+    if (!serverIdExists.some(server => server._id === params.serverId)) {
+        // If the serverId doesn't exist in serverIdExists, redirect to the homepage
         return redirect("/");
     }
     

@@ -12,8 +12,6 @@ export default defineSchema({
     status: v.string(), // User status
     userId: v.string(), // ID of the associated user
 
-    servers: v.array(v.string()), // Array of server IDs
-
     createdAt: v.number(), // Creation date
     updatedAt: v.number(), // Last updated date
   }),

@@ -64,8 +64,8 @@ const InviteModel = () => {
         setRenderKey((prevKey) => prevKey + 1); // Force re-render
       }
     }
-    console.log(server)
-    console.log(data)
+    // console.log(server)
+    // console.log(data)
   }, [data, profile]);
 
   const onCopy = () => {

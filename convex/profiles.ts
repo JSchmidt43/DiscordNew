@@ -20,7 +20,6 @@ export const createProfile = mutation({
         username,
         password,
         email,
-        servers : [],
         imageUrl,
         status,
         createdAt,
@@ -39,7 +38,6 @@ export const updateProfileById = mutation({
     email: v.optional(v.string()),
     imageUrl: v.optional(v.string()),
     status: v.optional(v.string()),
-    servers: v.optional(v.array(v.string())),
   },
   handler: async (ctx, args) => {
     // Retrieve a profile by userId field
@@ -58,7 +56,7 @@ export const updateProfileById = mutation({
     if (args.email !== undefined) updates.email = args.email;
     if (args.imageUrl !== undefined) updates.imageUrl = args.imageUrl;
     if (args.status !== undefined) updates.status = args.status;
-    if (args.servers !== undefined) updates.servers = args.servers;
+
 
     updates.updatedAt = Date.now();
     // Update the profile with the new fields
