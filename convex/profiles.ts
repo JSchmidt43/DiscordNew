@@ -11,7 +11,7 @@ export const createProfile = mutation({
       imageUrl: v.string(), // URL for the profile image
       status: v.string(), // User status
     },
-    handler: async (ctx, {  userId, name, username, password, email, imageUrl, status }) => {
+    handler: async (ctx, {  userId, name, username, password, email, imageUrl, status })  => {
       const createdAt = Date.now();
       const updatedAt = createdAt;
       const insertedProfileId = await ctx.db.insert('profiles', {
@@ -25,7 +25,9 @@ export const createProfile = mutation({
         createdAt,
         updatedAt
       });
-      return { profileId: insertedProfileId };
+      const createdProfile = await getProfileById(ctx, { profileId: insertedProfileId})
+
+      return { data: createdProfile.data, message: "Profile created successfully" };
     },
 });
 
@@ -43,8 +45,8 @@ export const updateProfileById = mutation({
     // Retrieve a profile by userId field
     const profile = await getProfileById(ctx, { profileId: args.profileId });
 
-    if(!profile) {
-      return { error: 'Profile not found' };
+    if(!profile.data) {
+      return { data: null, error: "Profile not found!!" };
     }
 
     const updates : any = {};
@@ -60,14 +62,76 @@ export const updateProfileById = mutation({
 
     updates.updatedAt = Date.now();
     // Update the profile with the new fields
-    await ctx.db.patch(profile._id, updates);
+    await ctx.db.patch(profile.data._id, updates);
     
-    const updatedProfile = await getProfileById(ctx, { profileId: profile._id });
-    return updatedProfile;
+    const updatedProfile = await getProfileById(ctx, { profileId: profile.data._id });
+    return { data: updatedProfile.data, message: "Profile updated successfully" };
   },
 });
 
-export const updateStatusByUserId = mutation({
+export const deleteProfileById = mutation({
+  args: { id: v.string() },
+  handler: async (ctx, { id }) => {
+    const profile = await getProfileById(ctx, { profileId: id });
+
+    if(!profile.data) {
+      return { data: null, error: "Profile not found!!" };
+    }
+    
+    // Delete the profile
+    await ctx.db.delete(profile.data._id);
+
+    return { data: profile.data._id ,message: 'Profile deleted successfully' };
+  },
+});
+
+export const getAllProfiles = query({
+    args: {},
+    handler: async (ctx) => {
+       const profiles = await ctx.db.query('profiles').collect(); 
+       return { data: profiles, message: "Fetched All Profiles" };
+}, });
+
+export const getProfileById = query({
+  args: {
+    profileId: v.string(),
+  },
+  handler: async (ctx, { profileId }) => {
+    const profile = await ctx.db.query('profiles')
+      .filter(q => q.eq(q.field('_id'), profileId))
+      .first(); // Retrieve a single profile
+    
+    if(!profile){
+      return { data: null, error: "Profile not found!!" };
+    }
+
+    return { data: profile, message: "Profile found" };
+
+  },
+});
+
+export const getProfileByUserId = query({
+  args: {
+    userId: v.string(),
+  },
+  handler: async (ctx, { userId })  => {
+    const profile = await ctx.db.query('profiles')
+      .filter(q => q.eq(q.field('userId'), userId))
+      .first(); // Retrieve a single channel
+    
+      
+    if(!profile){
+      return { data: null, error: "Profile not found!!" };
+    }
+
+    return { data: profile, message: "Profile found" };
+
+
+  },
+});
+
+
+/*export const updateStatusByUserId = mutation({
   args: { 
     userId: v.string(), 
     status: v.string(),
@@ -91,41 +155,6 @@ export const updateStatusByUserId = mutation({
     
     const updatedProfile = await getProfileById(ctx, { profileId: profile._id });
     return updatedProfile;
-  },
-});
-
-export const deleteProfileById = mutation({
-  args: { id: v.string() },
-  handler: async (ctx, { id }) => {
-    const profile = await getProfileById(ctx, { profileId: id });
-
-    if(!profile) {
-      return { error: 'Profile not found  '};
-    }
-    
-    // Delete the profile
-    await ctx.db.delete(profile._id);
-
-    return { message: 'Profile deleted successfully' };
-  },
-});
-
-export const getAllProfiles = query({
-    args: {},
-    handler: async (ctx) => {
-       const profiles = await ctx.db.query('profiles').collect(); 
-       return profiles;
-}, });
-
-export const getProfileById = query({
-  args: {
-    profileId: v.string(),
-  },
-  handler: async (ctx, { profileId }) => {
-    const profile = await ctx.db.query('profiles')
-      .filter(q => q.eq(q.field('_id'), profileId))
-      .first(); // Retrieve a single profile
-    return profile;
   },
 });
 
@@ -154,18 +183,6 @@ export const get_profiles_By_Ids = query({
   },
 });
 
-export const getProfileByUserId = query({
-  args: {
-    userId: v.string(),
-  },
-  handler: async (ctx, { userId }) => {
-    const profile = await ctx.db.query('profiles')
-      .filter(q => q.eq(q.field('userId'), userId))
-      .first(); // Retrieve a single channel
-    return profile;
-  },
-});
-
 export const deleteAllProfiles = mutation({
   args: {
     password: v.string()
@@ -181,3 +198,4 @@ export const deleteAllProfiles = mutation({
     }
   }
 });
+*/

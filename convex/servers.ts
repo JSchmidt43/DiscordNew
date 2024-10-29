@@ -41,20 +41,9 @@ export const createServer = mutation({
       });
 
       // Fetch the newly created server
-      const server = await ctx.db.get(insertedServerId);
+      const createdServer = await getServerById(ctx, { serverId: insertedServerId})
 
-      // Update server’s `channels` property by adding the new channelId
-      server?.channels.push(generalChannel.channelId);
-
-      // Update server’s `members` property by adding the new memberId
-      server?.members.push(creator.memberId);
-
-      // Update the server to include the new channels array
-      await ctx.db.patch(insertedServerId, { channels: server?.channels });
-
-      await ctx.db.patch(insertedServerId, { members: server?.members });
-
-      return { serverId: insertedServerId };
+      return { data: createdServer.data, message: "Server created successfully" };
     },
 });
 
@@ -70,8 +59,8 @@ export const updateServerById = mutation({
     // Retrieve a profile by userId field
     const server = await getServerById(ctx, { serverId: args.serverId });
 
-    if(!server) {
-      return { server: null, message: 'Server not found' };
+    if(!server.data) {
+      return { data: null, error: 'Server not found' };
     }
 
     const updates : any = {};
@@ -83,10 +72,10 @@ export const updateServerById = mutation({
 
     updates.updatedAt = Date.now();
     // Update the profile with the new fields
-    await ctx.db.patch(server._id, updates);
+    await ctx.db.patch(server.data!._id, updates);
     
-    const updatedServer = await getServerById(ctx, { serverId: server._id });
-    return updatedServer;
+    const updatedServer = await getServerById(ctx, { serverId: server.data!._id });
+    return { data: updatedServer.data, message: "Server updated successfully" };
   },
 });
 
@@ -98,21 +87,21 @@ export const addChannelToServerById = mutation({
   }, handler: async(ctx, { serverId, channelId}) => {
     const server = await getServerById(ctx, { serverId });
 
-    if (!server) {
-      return { server: null, message: 'Server not found' };
+    if (!server.data) {
+      return { data: null, error: 'Server not found' };
     }
 
-    if(server.channels.includes(channelId)){
-      return { server, message: 'Channel already exists in server' };
+    if(server.data.channels.includes(channelId)){
+      return { data: server, message: 'Channel already exists in server' };
     }
 
-    await ctx.db.patch(server._id, {
-      channels: [...server.channels, channelId],
+    await ctx.db.patch(server.data._id, {
+      channels: [...server.data.channels, channelId],
       updatedAt: Date.now()
     })
-    const updatedServer = await getServerById(ctx, { serverId: server._id });
+    const updatedServer = await getServerById(ctx, { serverId: server.data._id });
     return {
-      data: updatedServer, 
+      data: updatedServer.data, 
       message: "Channel added to server successfully"
     };
     
@@ -127,21 +116,21 @@ export const addmemberToServerById = mutation({
   }, handler: async(ctx, { serverId, memberId}) => {
     const server = await getServerById(ctx, { serverId });
 
-    if (!server) {
-      return { server: null, message: 'Server not found' };
+    if (!server.data) {
+      return { data: null, error: 'Server not found' };
     }
 
-    if(server.members.includes(memberId)){
-      return { server, message: 'Member already exists in server' };
+    if(server.data.members.includes(memberId)){
+      return { data: server , message: 'Member already exists in server' };
     }
 
-    await ctx.db.patch(server._id, {
-      members: [...server.members, memberId],
+    await ctx.db.patch(server.data._id, {
+      members: [...server.data.members, memberId],
       updatedAt: Date.now()
     })
-    const updatedServer = await getServerById(ctx, { serverId: server._id });
+    const updatedServer = await getServerById(ctx, { serverId: server.data._id });
     return {
-      data: updatedServer, 
+      data: updatedServer.data, 
       message: "Member added to server successfully"
     };
     
@@ -156,26 +145,26 @@ export const removeChannelFromServerById = mutation({
   handler: async (ctx, { serverId, channelId }) => {
     const server = await getServerById(ctx, { serverId });
 
-    if (!server) {
-      return { data: null, message: 'Server not found' };
+    if (!server.data) {
+      return { data: null, error: 'Server not found' };
     }
 
-    if (!server.channels.includes(channelId)) {
-      return { data: null, message: 'Channel not found in server' };
+    if (!server.data.channels.includes(channelId)) {
+      return { data: null, error: 'Channel not found in server' };
     }
 
-    const updatedChannels = server.channels.filter(_id => _id !== channelId);
+    const updatedChannels = server.data.channels.filter(_id => _id !== channelId);
 
-    await ctx.db.patch(server._id, {
+    await ctx.db.patch(server.data._id, {
       channels: updatedChannels,
       updatedAt: Date.now(),
     });
 
     await deleteChannelById(ctx, {channelId})
 
-    const updatedServer = await getServerById(ctx, { serverId: server._id });
+    const updatedServer = await getServerById(ctx, { serverId: server.data._id });
     return {
-      data: updatedServer,
+      data: updatedServer.data,
       message: 'Channel removed from server successfully',
     };
   },
@@ -189,26 +178,26 @@ export const removeMemberFromServerById = mutation({
   handler: async (ctx, { serverId, memberId }) => {
     const server = await getServerById(ctx, { serverId });
 
-    if (!server) {
-      return { data: null, message: 'Server not found' };
+    if (!server.data) {
+      return { data: null, error: 'Server not found' };
     }
 
-    if (!server.members.includes(memberId)) {
-      return { data: null, message: 'Member not found in server' };
+    if (!server.data.members.includes(memberId)) {
+      return { data: null, error: 'Member not found in server' };
     }
 
-    const updatedMembers = server.members.filter(id => id !== memberId);
+    const updatedMembers = server.data.members.filter(id => id !== memberId);
 
-    await ctx.db.patch(server._id, {
+    await ctx.db.patch(server.data._id, {
       members: updatedMembers,
       updatedAt: Date.now(),
     });
 
     await deleteMemberById(ctx, { memberId})
 
-    const updatedServer = await getServerById(ctx, { serverId: server._id });
+    const updatedServer = await getServerById(ctx, { serverId: server.data._id });
     return {
-      data: updatedServer,
+      data: updatedServer.data,
       message: 'Member removed from server successfully',
     };
   },
@@ -220,20 +209,27 @@ export const deleteServerById = mutation({
     serverId: v.string()
   }, 
   handler: async(ctx, { serverId }) => {
+
+    const serverExists = await getServerById(ctx, {serverId});
+
+    if(!serverExists.data){
+      return { data: null, error: "server not found!!" };
+    }
+
     const serverIdToDelete = serverId as Id<"servers">;
     const deletedServer = await ctx.db.delete(serverIdToDelete);
 
     const deletemembers = await getAllMembersByServerId(ctx, { serverId});
-    for(let member of deletemembers){
+    for(let member of deletemembers.data){
       await deleteMemberById(ctx, { memberId: member._id })
     }
 
     const deleteChannels = await getAllChannelsByServerId(ctx, { serverId})
-    for(let channel of deleteChannels){
+    for(let channel of deleteChannels.data){
       await deleteChannelById(ctx, { channelId: channel._id })
     }
 
-    return { data: deletedServer, message: "Server deleted"}
+    return { data: serverExists.data._id, message: "Server deleted"}
   },
 })
 
@@ -251,7 +247,7 @@ export const getServerWithMembersAndChannelsByServerIdAndProfileId = query({
 
     // Return null if the server doesn't exist or the profile is not a member
     if (!server) {
-      return null;
+      return { data: null, error: "Server not found!!" };
     }
 
     // Step 2: Fetch all members associated with the server
@@ -269,7 +265,7 @@ export const getServerWithMembersAndChannelsByServerIdAndProfileId = query({
     // Step 3: Check if the provided profileId exists among members' profileIds
     const isProfileMember = members.some(member => member.profileId === profileId);
     if (!isProfileMember) {
-      return { server: null };
+      return { data: null, error: "ProfileId is not a member of the server" };
     }
 
     // Step 4: Fetch all channels associated with the server
@@ -283,10 +279,12 @@ export const getServerWithMembersAndChannelsByServerIdAndProfileId = query({
       .sort((a, b) => a.createdAt - b.createdAt); // Sort channels by createdAt
 
     // Step 5: Return the server details with members and channels
-    return {
+    return { data: {
       ...server,
       members,
       channels,
+    }, message: "Server with members and channels retrieved successfully"
+      
     };
   },
 });
@@ -303,14 +301,14 @@ export const getServerWithMembersAndChannelsByServerId = query({
       .first();
 
     if (!server) {
-      return null; // Return empty arrays if the server doesn't exist
+      return { data: null, error: "Server not found!!" };
     }
 
     // Step 2: Fetch all members associated with the server
     const serverMembers = await getAllMembersByServerId(ctx, { serverId });
     
     // Step 3: Fetch profiles for each member and combine
-    const membersWithProfiles = await Promise.all(serverMembers.map(async (member) => {
+    const membersWithProfiles = await Promise.all(serverMembers.data.map(async (member) => {
       const profile = await getProfileById(ctx, { profileId: member.profileId });
       return {
         ...member,
@@ -331,9 +329,11 @@ export const getServerWithMembersAndChannelsByServerId = query({
 
     // Step 4: Return the members and channels
     return {
-      ...server,
-      members: membersWithProfiles,
-      channels
+      data: {
+        ...server,
+        members: membersWithProfiles,
+        channels
+      } , message: "Success"
     };
   },
 });
@@ -343,7 +343,7 @@ export const getAllServers = query({
     args: {},
     handler: async (ctx) => {
        const servers = await ctx.db.query('servers').collect(); 
-       return servers;
+       return { data: servers, message: "All servers fetched"};
   }, }
 );
 
@@ -379,7 +379,7 @@ export const getServerByProfileId = query({
     }
 
     // Return the matched server (or null if none found)
-    return { server: matchedServer };
+    return { data: matchedServer, message: "Server found" };
   },
 });
 
@@ -396,10 +396,11 @@ export const getServerById = query({
       .first(); // Retrieve a single server
 
     if (!server) {
-      return null
+      return { data: null, error: "server not found!!" };
+
     }
 
-    return server; // Return the server object
+    return { data: server, message: "Server found"}; // Return the server object
   },
 });
 
@@ -414,27 +415,27 @@ export const getServerByInviteCodeAndMemberCheck = query({
 
     if(!server){
       return {
-        server: null,
-        message: "Server not found"
+        data: null,
+        error: "Server not found"
       }
     }
 
     const members = await getAllMembersByServerId(ctx, { serverId: server._id})
-    const profileExists = members.some(member => member.profileId === profileId);
+    const profileExists = members.data.some(member => member.profileId === profileId);
 
     if(!profileExists){
       return {
-        server: server,
-        message: "ProfilId not a member"
+        data: server,
+        error: "ProfilId not a member"
       }
     }
 
     return {
-      server: {
+      data: {
         ...server,
         members
       },
-      message : "201"
+      message : "Success"
     }
   }
 })
@@ -454,12 +455,12 @@ export const getAllServersByProfileId = query({
     const serverIds = memberRecords.map(member => member.serverId);
 
     let servers = [];
-    for (const id   of serverIds) {
+    for (const id of serverIds) {
       let server = await ctx.db.get(id as Id<"servers">);
       if (server) servers.push(server);
     }
 
-    return servers;
+    return { data: servers, message: "Success"};
 
   },
 });

@@ -159,15 +159,15 @@ const MembersModel = () => {
           {server?.members?.map((member: MemberWithProfiles) => (
             <div key={member?._id} className="flex items-center gap-x-2 mb-6">
               <div className="hover:cursor-pointer" onClick={()=>handleOpenUserInfo(member)}>
-                <UserAvatar src={member.profile.imageUrl}/>
+                <UserAvatar src={member?.profile?.imageUrl}/>
 
               </div>
                 <div className="flex flex-col gap-y-1">
                   <div className="text-sm font-semibold flex items-center gap-x-1">
-                      {member.profile.username}
+                      {member?.profile?.username}
                       {roleIconMap[member.role]}
                   </div>
-                  <p className="text-xs text-zinc-500">{member.profile.email}</p>
+                  <p className="text-xs text-zinc-500">{member?.profile?.email}</p>
                 </div>
                 {server?.creatorId !== member.profileId && loadingId !== member._id &&
                   hasHigherRole(memberRef.current?.role, member.role) && (

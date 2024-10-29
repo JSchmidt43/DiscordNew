@@ -24,9 +24,9 @@ export const createChannel = mutation({
       });
 
       await addChannelToServerById(ctx, { channelId: insertedChannelId, serverId})
+      const createdChannel = await getChannelById(ctx, { channelId: insertedChannelId})
 
-
-      return { channelId: insertedChannelId };
+      return { data: createdChannel, message: "Channel created successfully" };
     },
 });
 
@@ -38,7 +38,12 @@ export const deleteChannelById = mutation({
     const deletedChannel = await ctx.db.delete(channelToDelete)
 
     const channel = await getChannelById(ctx, { channelId })
-    const serverId = channel?.serverId!;
+
+    if(!channel.data){
+      return { data: null, error: "Channel not found"}
+    }
+
+    const serverId = channel?.data?.serverId!;
 
     await removeChannelFromServerById(ctx, { channelId, serverId })
     
@@ -50,7 +55,7 @@ export const getAllChannels = query({
     args: {},
     handler: async (ctx) => {
        const channels = await ctx.db.query('channels').collect(); 
-       return channels;
+       return { data: channels, message: "All channels fetched"};
 }, });
 
 export const getAllChannelsByServerId = query({
@@ -60,9 +65,8 @@ export const getAllChannelsByServerId = query({
   handler: async (ctx, {serverId}) => {
      const channels = await ctx.db.query('channels')
       .filter(q => q.eq(q.field("serverId"), serverId)).collect();
-    
 
-     return channels;
+     return { data: channels, message: "Success"};
 }, });
 
 export const getChannelById = query({
@@ -73,6 +77,11 @@ export const getChannelById = query({
     const channel = await ctx.db.query('channels')
       .filter(q => q.eq(q.field('_id'), channelId))
       .first(); // Retrieve a single channel
-    return channel;
+    
+    if(!channel){
+      return { data: null, error: "Channel not found"}
+    }
+
+    return { data: channel, message: "Channel found"}
   },
 });

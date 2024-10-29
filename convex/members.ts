@@ -25,9 +25,10 @@ export const createMember = mutation({
 
       await addmemberToServerById(ctx, { memberId: insertedMemberId, serverId})
 
-      const server = await getServerById(ctx, { serverId })
+      const member = await getMemberById(ctx, { memberId: insertedMemberId})
 
-      return { memberId: insertedMemberId, server: server };
+
+      return { data: member.data, message: "Member created successfully"  };
     },
 });
 
@@ -41,14 +42,14 @@ export const deleteMemberById = mutation({
     const member = await getMemberById(ctx, { memberId})
 
     if(!member.data){
-      return { data: null, message: "Member not found to delete!"}
+      return { data: null, error: "Member not found to delete!"}
     }
 
     const deletedMember = await ctx.db.delete(memberIdToDelete);
 
     await removeMemberFromServerById(ctx, { memberId, serverId: member.data.serverId })
 
-    return { data: deletedMember, message: "Member deleted successfully"}
+    return { data: memberIdToDelete, message: "Member deleted successfully"}
   },
 })
 
@@ -61,7 +62,7 @@ export const getMemberById = mutation({
       .first();
 
     if(!member){
-      return { data: null, message: "Member not found"}
+      return { data: null, error: "Member not found"}
     }
 
     return { data: member, message: "Member found"}
@@ -74,7 +75,7 @@ export const getAllMembers = query({
     args: {},
     handler: async (ctx) => {
        const members = await ctx.db.query('members').collect(); 
-       return members;
+       return { data: members, message: "All members fetched"};
 }, });
 
 export const getMemberByServerIdAndProfileId = query({
@@ -88,7 +89,11 @@ export const getMemberByServerIdAndProfileId = query({
       .filter(q => q.eq(q.field("profileId"), profileId))
       .first();
 
-    return member;
+    if(!member){
+      return { data: null, error: "Member not found!!" };
+
+    }
+    return { data: member, message: "Member found"};
   },
 }); 
 
@@ -101,6 +106,7 @@ export const getAllMembersByServerId = query({
     const members = await ctx.db.query("members")
       .filter(q => q.eq(q.field("serverId"), serverId)).collect()
 
-    return members || null;
+    return { data: members, message: "Success"};
   },
 })
+
