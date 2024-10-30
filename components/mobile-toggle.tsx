@@ -6,11 +6,14 @@ import {
 } from "@/components/ui/sheet"
 import { Button } from "./ui/button"
 import { NavigationSideBar } from "./navigation/navigation-sidebar"
-import { ServerSidebar } from "./servers/server-sidebar"
+import ServerSidebar from "./servers/server-sidebar"
+import { currentProfile } from "@/lib/current-profile"
 
-export const MobileToggle = ({
+export const MobileToggle = async ({
     serverId
 }: { serverId: string}) =>  {
+
+    const profile = await currentProfile();
 
     return(
         <Sheet>
@@ -21,9 +24,9 @@ export const MobileToggle = ({
             </SheetTrigger>
             <SheetContent side="left" className="p-0 flex gap-0">
                 <div className="w-[72px]">
-                    <NavigationSideBar />
+                    <NavigationSideBar profileId={profile?._id!}/>
                 </div>
-                <ServerSidebar serverId={serverId} isMobileHeader={true}/>
+                <ServerSidebar profileId={profile?._id!} serverId={serverId} isMobileHeader={true}/>
             </SheetContent>
         </Sheet>
     )

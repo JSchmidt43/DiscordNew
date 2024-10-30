@@ -16,6 +16,9 @@ import { useRouter } from "next/navigation";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import UserInfoModel from "./userinfo-model";
 import axios from "axios";
+import qs from "query-string";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 const roleIconMap = {
   GUEST: null,
@@ -32,8 +35,6 @@ const roleHierarchy = {
   GUEST: 1
 };
 
-
-
 const MembersModel = () => {
   const { onOpen, isOpen, onClose, type, data } = useModel();
   const [loadingId, setLoadingId] = useState("");
@@ -44,8 +45,6 @@ const MembersModel = () => {
   const { server } = data as { server: ServerWithChannelsWithMembers };
   const router = useRouter();
   const memberRef = useRef(null);
-
-  console.log(server)
 
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -74,6 +73,7 @@ const MembersModel = () => {
 
     fetchProfile();
   }, []);
+
 
   // Update memberRef when profile or data changes
   useEffect(() => {
@@ -106,25 +106,39 @@ const MembersModel = () => {
   };
 
   const onRoleChange = async (memberId: string, role: MemberRole) => {
-  };
+    try {
+      setLoadingId(memberId);
+      const url = qs.stringifyUrl({
+        url: `/api/members/${memberId}`
+      });
 
+      // Call the API to update the member's role
+      const response = await axios.patch(url, {
+        memberId: memberId,
+        role: role
+      });
+
+      router.refresh();
+      onOpen("members", { server: response.data.data})
+
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoadingId("");
+    }
+  };
   // Kick a member from the server
   const onKick = async (memberId: string) => {
     try {
       setLoadingId(memberId);
       const url = qs.stringifyUrl({
-        url: `/api/socket/server-members-kick`,
+        url: `/api/members/${memberId}`
       });
 
-      const response = await axios.delete(url, {
-        data: {
-          memberId: memberId, // Send memberId in the body
-          serverId: server._id, // Send serverId in the body
-        },
-      });
+      const response = await axios.delete(url);
 
       router.refresh();
-      onOpen("members", { server: response.data.server });
+      onOpen("members", { server: response.data.data });
     } catch (error) {
       console.log(error);
     } finally {
@@ -190,7 +204,7 @@ const MembersModel = () => {
                                       <>
                                         <DropdownMenuItem
                                           onClick={() => {
-                                            onRoleChange(member.id, "ADMIN");
+                                            onRoleChange(member._id, MemberRole.ADMIN);
                                           }}
                                         >
                                           <ShieldAlert className="h-4 w-4 mr-2" />
@@ -200,7 +214,7 @@ const MembersModel = () => {
                                           )}
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
-                                          onClick={() => onRoleChange(member.id, "MODERATOR")}
+                                          onClick={() => onRoleChange(member._id, MemberRole.MODERATOR)}
                                         >
                                           <ShieldCheck className="h-4 w-4 mr-2" />
                                           Moderator
@@ -209,7 +223,7 @@ const MembersModel = () => {
                                           )}
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
-                                          onClick={() => onRoleChange(member.id, "GUEST")}
+                                          onClick={() => onRoleChange(member._id, MemberRole.GUEST)}
                                         >
                                           <Shield className="h-4 w-4 mr-2" />
                                           Guest
@@ -222,7 +236,7 @@ const MembersModel = () => {
                                     {memberRef.current?.role === "ADMIN" && (
                                       <>
                                         <DropdownMenuItem
-                                          onClick={() => onRoleChange(member.id, "MODERATOR")}
+                                          onClick={() => onRoleChange(member._id, MemberRole.MODERATOR)}
                                         >
                                           <ShieldCheck className="h-4 w-4 mr-2" />
                                           Moderator
@@ -231,7 +245,7 @@ const MembersModel = () => {
                                           )}
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
-                                          onClick={() => onRoleChange(member.id, "GUEST")}
+                                          onClick={() => onRoleChange(member._id, MemberRole.GUEST)}
                                         >
                                           <Shield className="h-4 w-4 mr-2" />
                                           Guest
@@ -248,7 +262,7 @@ const MembersModel = () => {
                             </>
                           )}
 
-                          <DropdownMenuItem onClick={() => onKick(member.id)}>
+                          <DropdownMenuItem onClick={() => onKick(member._id)}>
                             <UserMinusIcon className="h-4 w-4 mr-2" />
                             Kick
                           </DropdownMenuItem>

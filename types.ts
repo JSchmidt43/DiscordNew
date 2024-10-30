@@ -8,7 +8,6 @@ export interface Profile {
     imageUrl: string; // URL for the profile image
     status: string; // User status
     userId: string; // ID of the associated user
-    servers: string[]; // Array of server IDs
     createdAt: number; // Creation date
     updatedAt: number; // Last updated date
 }

@@ -57,7 +57,7 @@ const InviteModel = () => {
   useEffect(() => {
     if (server?.members && profile) {
       const foundMember = server.members.find(
-        (mbm : Member) => mbm.profileId === profile._id
+        (mbm: Member) => mbm.profileId === profile._id
       );
       if (foundMember) {
         memberRef.current = foundMember;
@@ -71,7 +71,6 @@ const InviteModel = () => {
   const onCopy = () => {
     navigator.clipboard.writeText(inviteUrl);
     setCopied(true);
-
     setTimeout(() => {
       setCopied(false);
     }, 1000);

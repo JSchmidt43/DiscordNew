@@ -8,11 +8,11 @@ const SetupPage = async () => {
     const profile = await InitialProfile();
 
     const serverData = await fetchQuery(api.servers.getServerByProfileId, {
-        profileId: profile!._id
+        profileId: profile?._id!
     });
 
-    if(serverData.server){
-        return redirect(`/servers/${serverData.server._id}`)
+    if(serverData.data){
+        return redirect(`/servers/${serverData.data?._id}`)
     }
     
 

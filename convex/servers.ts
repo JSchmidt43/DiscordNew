@@ -309,7 +309,7 @@ export const getServerWithMembersAndChannelsByServerId = query({
     
     // Step 3: Fetch profiles for each member and combine
     const membersWithProfiles = await Promise.all(serverMembers.data.map(async (member) => {
-      const profile = await getProfileById(ctx, { profileId: member.profileId });
+      const profile = (await getProfileById(ctx, { profileId: member.profileId })).data;
       return {
         ...member,
         profile, // Attach the profile object to the member
@@ -435,6 +435,28 @@ export const getServerByInviteCodeAndMemberCheck = query({
         ...server,
         members
       },
+      message : "Success"
+    }
+  }
+})
+
+export const getServerByInviteCode = query({
+  args: {
+    inviteCode: v.string()
+  }, handler: async (ctx, {inviteCode}) => {
+    const server = await ctx.db.query("servers")
+      .filter(q => q.eq(q.field("inviteCode"), inviteCode))
+      .first();
+
+    if(!server){
+      return {
+        data: null,
+        error: "Server not found"
+      }
+    }
+
+    return {
+      data: server,
       message : "Success"
     }
   }

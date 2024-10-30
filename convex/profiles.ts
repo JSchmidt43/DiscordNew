@@ -130,8 +130,7 @@ export const getProfileByUserId = query({
   },
 });
 
-
-/*export const updateStatusByUserId = mutation({
+export const updateStatusByUserId = mutation({
   args: { 
     userId: v.string(), 
     status: v.string(),
@@ -141,7 +140,7 @@ export const getProfileByUserId = query({
     const profile = await getProfileByUserId(ctx, { userId: args.userId });
 
     if(!profile) {
-      return { error: 'Profile not found' };
+      return { data: null, error: 'Profile not found' };
     }
 
     const updates : any = {};
@@ -151,10 +150,37 @@ export const getProfileByUserId = query({
 
     updates.updatedAt = Date.now();
     // Update the profile with the new fields
-    await ctx.db.patch(profile._id, updates);
+    await ctx.db.patch(profile.data?._id!, updates);
     
-    const updatedProfile = await getProfileById(ctx, { profileId: profile._id });
-    return updatedProfile;
+    const updatedProfile = await getProfileById(ctx, { profileId: profile.data?._id! });
+    return { data: updatedProfile, message: "Profile updated"};
+  },
+});
+
+export const updateStatusById = mutation({
+  args: { 
+    profileId: v.string(), 
+    status: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Retrieve a profile by profileid field
+    const profile = await getProfileById(ctx, { profileId: args.profileId });
+
+    if(!profile.data) {
+      return { data: null, error: 'Profile not found' };
+    }
+
+    const updates : any = {};
+
+    // Collect the fields that are provided and should be updated
+    if (args.status !== undefined) updates.status = args.status;
+
+    updates.updatedAt = Date.now();
+    // Update the profile with the new fields
+    await ctx.db.patch(profile.data?._id!, updates);
+    
+    const updatedProfile = await getProfileById(ctx, { profileId: profile.data?._id! });
+    return { data: updatedProfile.data, message: "Profile status updated"};
   },
 });
 
@@ -164,7 +190,7 @@ export const get_profiles_By_Ids = query({
   },
   handler: async (ctx, { profileIds }) => {
     if (profileIds.length === 0){
-      return ["NONE"]
+      return { data: null, error : "Array empty"}
     }
 
      // Use map to create an array of promises
@@ -178,11 +204,12 @@ export const get_profiles_By_Ids = query({
     // Wait for all promises to resolve
     const profiles = await Promise.all(profilePromises);
 
-    return profiles;
+    return { data: profiles, message: "Success"};
 
   },
 });
 
+/*
 export const deleteAllProfiles = mutation({
   args: {
     password: v.string()

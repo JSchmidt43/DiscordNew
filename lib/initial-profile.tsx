@@ -14,8 +14,8 @@ export const InitialProfile = async() => {
         userId: user.id
     });
 
-    if(profile){
-        return profile
+    if(profile.data){
+        return profile.data
     }
     console.log(user)
 
@@ -36,10 +36,10 @@ export const InitialProfile = async() => {
 
     // Fetch the newly created profile
     const newProfile = await fetchQuery(api.profiles.getProfileById, {
-        profileId: createdProfile.profileId,
+        profileId: createdProfile.data?._id!,
     });
 
-    return newProfile;
+    return newProfile.data;
     
 
 }

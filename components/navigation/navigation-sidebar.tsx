@@ -13,7 +13,7 @@ export const NavigationSideBar = ({ profileId }: { profileId : string}) => {
 
     const servers = useQuery(api.servers.getAllServersByProfileId, {
         profileId: profileId
-    });
+    })?.data;
 
     return (
         <div className=" flex flex-col items-center

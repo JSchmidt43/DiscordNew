@@ -45,7 +45,17 @@ export const deleteMemberById = mutation({
       return { data: null, error: "Member not found to delete!"}
     }
 
-    const deletedMember = await ctx.db.delete(memberIdToDelete);
+    const server = await getServerById(ctx, { serverId: member.data.serverId});
+
+    if(!server.data){
+      return { data: null, error: "Server not found with the member"}
+    }
+
+    if(member.data.profileId === server.data?.creatorId){
+      return { data: null, error: "Cannot remove the creator"}
+    }
+
+    await ctx.db.delete(memberIdToDelete);
 
     await removeMemberFromServerById(ctx, { memberId, serverId: member.data.serverId })
 
@@ -53,7 +63,40 @@ export const deleteMemberById = mutation({
   },
 })
 
-export const getMemberById = mutation({
+export const updateRoleById = mutation({
+  args: {
+    memberId: v.string(),
+    role: v.string()
+  }, handler: async (ctx, { memberId, role }) => {
+    const member = await getMemberById(ctx, {memberId: memberId as Id<"members">});  
+
+    if(role !== "ADMIN" && role !== "MODERATOR" && role !== "GUEST"){
+      return { data: null, error: "Invalid role"}
+    }
+
+    if(!member.data){
+      return { data: null, error: "Member not found to update!"}
+    }
+
+    const server = await getServerById(ctx, { serverId: member.data.serverId});
+
+    if(!server.data){
+      return { data: null, error: "Server not found with the member"}
+    }
+
+    if(member.data.profileId === server.data?.creatorId){
+      return { data: null, error: "Cannot update the role of the creator"}
+    }
+
+    const updateMember = await ctx.db.patch(member.data._id, { role });
+
+    const updatedMember = await getMemberById(ctx, { memberId })
+
+    return { data: updatedMember.data, message: "Member's role updated successfully"}
+  },
+})
+
+export const getMemberById = query({
   args: {
     memberId: v.string()
   }, handler: async (ctx, { memberId }) => {
@@ -96,7 +139,6 @@ export const getMemberByServerIdAndProfileId = query({
     return { data: member, message: "Member found"};
   },
 }); 
-
 
 export const getAllMembersByServerId = query({
   args: {

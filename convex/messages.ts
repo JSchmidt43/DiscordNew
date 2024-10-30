@@ -5,24 +5,33 @@ export const createMessage = mutation({
     args: {
       content: v.string(), 
       fileUrl: v.optional(v.string()),
-      memberId: v.optional(v.string()),
+      memberId: v.string(),
       username: v.string(),
       channelId: v.string(), 
     },
     handler: async (ctx, { content, fileUrl, memberId, username, channelId }) => {
       const createdAt = Date.now();
       const updatedAt = createdAt;
-      const insertedMessageId = await ctx.db.insert('messages', {
+
+      const messageData : any= {
         content,
-        fileUrl,
         memberId,
         username,
         channelId,
         deleted: false,
         createdAt,
         updatedAt
-      });
-      return { messageId: insertedMessageId };
+      };
+
+      if(fileUrl !== undefined && fileUrl !== null){
+        messageData.fileUrl = fileUrl;
+      }
+
+      const insertedMessageId = await ctx.db.insert('messages',messageData);
+
+      const createdMessage = await getMessageById(ctx, { messageId: insertedMessageId})
+
+      return { data: createdMessage.data, message:"Message created"};
     },
   });
 
@@ -31,4 +40,15 @@ export const getAllMessages = query({
     handler: async (ctx) => {
        const messages = await ctx.db.query('messages').collect(); 
        return messages;
-    }, });
+}, });
+
+export const getMessageById = query({
+  args: {
+    messageId: v.string()
+  },
+  handler: async (ctx, { messageId }) => {
+     const messages = await ctx.db.query('messages')
+      .filter(q => q.eq(q.field("_id"), messageId)).first(); 
+
+     return { data: messages, message: "Message found"};
+}, });

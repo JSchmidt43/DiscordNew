@@ -7,7 +7,7 @@ import { useModel } from "@/hooks/use-model-store";
 
 interface ServerHeaderProps {
     server: ServerWithChannelsWithMembers;
-    role?: MemberRole;
+    role?: MemberRole | string;
     isMobile?: boolean
 };
 

@@ -1,4 +1,4 @@
-import { Server, Channel, Profile, Message, Member, ServerWithChannelsWithMembers, ServerWithMembersWithProfiles } from "@/types";
+import { Server, Channel, Profile, Message, Member, ServerWithChannelsWithMembers, ServerWithMembersWithProfiles, ChannelType } from "@/types";
 import { create } from "zustand"
 
 export type ModelType = "createServer" | "invite" | "editServer" 
@@ -7,7 +7,8 @@ export type ModelType = "createServer" | "invite" | "editServer"
 
 interface ModelData {
     server?: Server;
-    // channelType?: ChannelType,
+    channel?:Channel;
+    channelType?: ChannelType,
     apiUrl?: string,
     query?: Record<string,any>
 }

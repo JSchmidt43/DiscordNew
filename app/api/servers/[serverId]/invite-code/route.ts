@@ -23,7 +23,7 @@ export async function PATCH(
             inviteCode: uuidv4()
         })
 
-        return NextResponse.json(server)
+        return NextResponse.json(server.data)
     } catch (error) {
         console.log("[SERVER_ID]", error);
         return new NextResponse("Internal Error", { status: 500})

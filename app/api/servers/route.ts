@@ -21,7 +21,7 @@ export async function POST(req: Request){
             creatorId: profile._id
         });
 
-        return NextResponse.json(server)
+        return NextResponse.json(server.data)
         
     } catch (error) {
         console.log("[SERVER_POST]", error);

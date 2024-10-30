@@ -26,7 +26,7 @@ const ServerIdLayout = async ({
     })
 
     // // If the serverId doesn't exist in profile.servers, redirect to the homepage
-    if (!serverIdExists.some(server => server._id === params.serverId)) {
+    if (!serverIdExists.data.some(server => server._id === params.serverId)) {
         // If the serverId doesn't exist in serverIdExists, redirect to the homepage
         return redirect("/");
     }

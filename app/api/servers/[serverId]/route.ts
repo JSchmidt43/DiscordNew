@@ -21,7 +21,7 @@ export async function PATCH(
             imageUrl
         })
 
-        return NextResponse.json(server);
+        return NextResponse.json(server.data);
 
     } catch (error) {
         console.log("[SERVER_ID_PATCH_ERROR]", error);
@@ -40,7 +40,7 @@ export async function DELETE(
         }
 
         const server = await fetchMutation(api.servers.deleteServerById, { serverId: params.serverId })
-        return NextResponse.json(server);
+        return NextResponse.json(server.data);
 
     } catch (error) {
         console.log("[SERVER_ID_DELETE_ERROR]", error);

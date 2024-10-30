@@ -29,19 +29,19 @@ const InviteCodePage = async ({
     })
 
 
-    if(existingServer.server && existingServer.message === "201"){
-        return redirect(`/servers/${existingServer.server._id}`);
+    if(existingServer.data && existingServer.message){
+        return redirect(`/servers/${existingServer.data._id}`);
     }
 
     const createdMember = await fetchMutation(api.members.createMember, {
         role: "GUEST",
         profileId: profile._id,
-        serverId: existingServer.server!._id
+        serverId: existingServer.data!._id
     })
 
 
-    if(createdMember.server){
-        return redirect(`/servers/${createdMember.server!._id}`);
+    if(createdMember.data){
+        return redirect(`/servers/${createdMember.data!._id}`);
     }
 
     // return null;
