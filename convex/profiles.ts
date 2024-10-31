@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from 'convex/values';
+import { getMemberById } from "./members";
 
 export const createProfile = mutation({
     args: {
@@ -125,6 +126,30 @@ export const getProfileByUserId = query({
     }
 
     return { data: profile, message: "Profile found" };
+
+
+  },
+});
+
+export const getProfileByMemberId = query({
+  args: {
+    memberId: v.string(),
+  },
+  handler: async (ctx, { memberId })  => {
+
+    const member = await getMemberById(ctx, { memberId })
+    
+    if(!member.data){
+      return { data : null, erorr: "Member not found"}
+    }
+
+    const profile = await getProfileById(ctx, { profileId: member.data.profileId})
+      
+    if(!profile){
+      return { data: null, error: "Profile not found!!" };
+    }
+
+    return { data: profile.data, message: "Profile found" };
 
 
   },

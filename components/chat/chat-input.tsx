@@ -8,13 +8,15 @@ import { Plus, SmileIcon } from "lucide-react";
 import { Input } from "../ui/input";
 import { useModel } from "@/hooks/use-model-store";
 import { useRouter } from "next/navigation";
-import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { EmojiPicker } from "../emoji-picker";
+import { useMutation } from "convex/react";
 
 interface ChatInputProps {
-    apiUrl : string;
-    query: Record<string,any>
+    channelId: string;
+    serverId: string;
+    memberId: string;
+    username: string;
     name: string;
     type: "conversation" | "channel"
 }
@@ -24,8 +26,10 @@ const formSchema = z.object({
 });
 
 export const ChatInput = ({
-    apiUrl,
-    query,
+    channelId,
+    serverId,
+    memberId,
+    username,
     name,
     type,
 }: ChatInputProps) => {
@@ -44,17 +48,16 @@ export const ChatInput = ({
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
-            const data = {
-                fileUrl: undefined,
+
+            await createMessageMutation({
                 content: values.content,
-                channelId: "test",
-                username: "testUser",
-                memberId: "testMemberId"          
-                };
-        
-              const result = createMessageMutation(data);
-              console.log(result);
+                memberId,
+                username,
+                channelId,
+            });
+
             form.reset();
+            router.refresh();
         } catch (error) {
             console.log(error);
         }
@@ -72,7 +75,7 @@ export const ChatInput = ({
                                 <div className="relative p-4 pb-6">
                                     <button 
                                       type="button"
-                                      onClick={()=>onOpen("messageFile", {apiUrl, query})}
+                                      onClick={()=>onOpen("messageFile", {})}
                                       className="absolute top-7 left-8 h-[24px] w-[24px]
                                       bg-zinc-500 dark:bg-zinc-400 hover:bg-zinc-600
                                       dark:hover:bg-zinc-300 transition rounded-full p-1

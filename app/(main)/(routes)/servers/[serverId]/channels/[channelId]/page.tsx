@@ -1,5 +1,6 @@
 import { ChatHeader } from "@/components/chat/chat-header";
 import { ChatInput } from "@/components/chat/chat-input";
+import { ChatMessages } from "@/components/chat/chat-messages";
 import { api } from "@/convex/_generated/api";
 import { currentProfile } from "@/lib/current-profile"
 import { auth } from "@clerk/nextjs/server";
@@ -22,7 +23,7 @@ const ChannelIdPage = async ({
 
     const channel = await fetchQuery(api.channels.getChannelById, { channelId: params.channelId})
 
-    const member = await fetchQuery(api.members.getMemberByServerIdAndProfileId, { serverId: params.serverId, profileId: profile._id})
+    const member = await fetchQuery(api.members.getMemberAndProfileByServerIdAndProfileId, { serverId: params.serverId, profileId: profile._id})
 
     if(!channel.data || !member.data){
         redirect("/");
@@ -35,15 +36,19 @@ const ChannelIdPage = async ({
                 serverId={channel.data.serverId}
                 type="channel"
             />
-            <div className="flex-1">Future messages</div>
+            <ChatMessages
+                member={member.data}
+                name={channel.data.name}
+                channelId={channel.data._id}
+                type="channel"
+            />
             <ChatInput
                 name={channel.data.name}
                 type="channel"
-                apiUrl="/api/socket/messages"
-                query={{
-                    channelId: channel.data._id,
-                    serverId: channel.data.serverId
-                }}    
+                username={profile.username}
+                channelId={channel.data._id}
+                serverId={channel.data.serverId}  
+                memberId={member.data._id}
             />
         </div>
     )

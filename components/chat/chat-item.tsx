@@ -21,9 +21,8 @@ import {
 } from "@/components/ui/form"
 import { useModel } from "@/hooks/use-model-store";
 import { MemberWithProfiles } from "@/types";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-
 
 interface ChatItemProps {
   id: string;
@@ -33,7 +32,7 @@ interface ChatItemProps {
   fileUrl: string | undefined;
   deleted: boolean;
   deletionActor: string | undefined;
-  currentMember: Member | undefined;
+  currentMember: MemberWithProfiles | undefined;
   isUpdated: boolean;
 }
 
@@ -60,13 +59,20 @@ export const ChatItem = ({
   deleted,
   currentMember,
   isUpdated,
+
 }: ChatItemProps) => {
   const defaultProfilePic = "/defaultpfp.png";
   const [isEditing, setIsEditing] = useState(false);
   const { onOpen } = useModel();
   const [isUserInfoOpen, setUserInfoOpen] = useState(false);
   const [showActor, setShowActor] = useState(false);
+  const [isImageValid, setIsImageValid] = useState(true); // Track image validity
 
+  const profile = useQuery(api.profiles.getProfileByMemberId, { memberId: deletionActor as string })?.data
+  const member = useQuery(api.members.getMemberById, { memberId: deletionActor as string})?.data
+
+  const memberProfile= { ...member, profile }
+  
 
   useEffect(() => {
     const handleKeyDown = (event: any) => {
@@ -91,18 +97,8 @@ export const ChatItem = ({
   const isLoading = form.formState.isSubmitting;
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      
-      const data = {
-        fileUrl: undefined,
-        content: content,
-        channelId: "test",
-        username: "testUser",
-        memberId: "testMemberId",
-        deleted: false,
-      };
 
-      const result = await createMessageMutation(data);
-      console.log(result);
+
       form.reset();
       setIsEditing(false);
     } catch (error) {
@@ -135,36 +131,42 @@ export const ChatItem = ({
 
   return (
     <div
-      className="relative group flex items-center hover:bg-black/5 p-4 transition w-full"
+      className={`relative group flex items-center hover:bg-black/5 p-4 transition w-full`}
       onMouseEnter={() => setShowActor(true)}  // Set hover state to true on mouse enter
       onMouseLeave={() => setShowActor(false)} // Set hover state to false on mouse leave
     >
-      <div className="group flex gap-x-2 items-start w-full">
-        <UserAvatar src={defaultProfilePic} />
+      <div className={`group flex gap-x-2 items-start w-full`}>
+        <UserAvatar src={memberProfile?.profile?.imageUrl} />
         <div className="flex flex-col w-full">
           <div className="flex items-center gap-x-2">
             <div className="flex items-center">
               <p className="font-semibold text-sm mr-1">
-                  <span className="text-red-500">
-                    {username || "User not found"}
-                  </span>
+                <span className="text-black dark:text-white">
+                  {username || "User not found"}
+                </span>
               </p>
             </div>
             <span className="text-xs text-zinc-500 dark:text-zinc-400">
               {timestamp}
             </span>
           </div>
-          {isImage && (
+          {isImage && isImageValid ? (
             <a
               href={fileUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="relative aspect-square rounded-md mt-2 overflow-hidden border flex items-center bg-secondary h-48 w-48"
             >
-              <Image src={fileUrl} alt={content} fill className="object-cover" />
+              <Image
+                src={fileUrl}
+                alt="Image not found"
+                fill
+                className="object-cover"
+                onLoad={() => setIsImageValid(true)} // Image successfully loaded
+                onError={() => setIsImageValid(false)} // Image failed to load
+              />
             </a>
-          )}
-          {isPdf && (
+          ) : (
             <div className="relative flex items-center p-2 mt-2 rounded-md bg-background/10">
               <FileIcon className="h-10 w-10 fill-indigo-200 stroke-indigo-400" />
               <a
@@ -177,10 +179,11 @@ export const ChatItem = ({
               </a>
             </div>
           )}
+          
           {!fileUrl && !isEditing && (
             <p
               className={cn(
-                "text-sm text-zinc-600 dark:text-zinc-300",
+                "text-sm text-zinc-600 dark:text-zinc-300 break-words overflow-hidden w-full",
                 deleted && "italic text-zinc-500 dark:text-zinc-400 text-xs mt-1"
               )}
             >

@@ -52,3 +52,14 @@ export const getMessageById = query({
 
      return { data: messages, message: "Message found"};
 }, });
+
+export const getAllMessageByChannelId = query({
+  args: {
+    channelId: v.string()
+  },
+  handler: async (ctx, { channelId }) => {
+     const messages = await ctx.db.query('messages')
+      .filter(q => q.eq(q.field("channelId"), channelId)).collect(); 
+
+     return { data: messages, message: "Message found"};
+}, });

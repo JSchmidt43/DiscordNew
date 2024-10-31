@@ -9,8 +9,12 @@ interface ModelData {
     server?: Server;
     channel?:Channel;
     channelType?: ChannelType,
-    apiUrl?: string,
-    query?: Record<string,any>
+    fileData?: {
+        username: string,
+        channelId: string,
+        serverId: string | undefined,
+        memberId: string
+    }
 }
 
 interface ModelStore{

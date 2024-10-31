@@ -38,7 +38,7 @@ const ServerIdLayout = async ({
                 flex-col inset-y-0">
                     <ServerSidebar profileId={profile._id} serverId={params.serverId} isMobileHeader={false}/>
                 </div>
-                <main className="h-full md:pl-60">
+                <main className="h-full md:pl-60 overflow-hidden overflow-wrap break-words">
                     {children}
                 </main>
         </div>

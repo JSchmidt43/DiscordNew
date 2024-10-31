@@ -12,6 +12,7 @@ import JoinServerModel from "../models/join-server"
 import ServerChoiceModel from "../models/server-choice-model"
 import EditChannelModel from "../models/edit-channel-model"
 import DeleteChannelModel from "../models/delete-channel-model"
+import MessageFileModel from "../models/message-file-model"
 
 
 export const ModelProvider = () => {
@@ -36,8 +37,8 @@ export const ModelProvider = () => {
             <ServerChoiceModel/>
             <EditChannelModel/>
             <DeleteChannelModel/>
-            {/* 
             <MessageFileModel />
+            {/* 
             <DeleteMessageModel/>
              */}
         </>

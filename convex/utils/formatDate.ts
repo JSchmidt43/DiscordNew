@@ -11,6 +11,6 @@ export function formatDate(timestamp: number): string {
     const seconds = String(date.getSeconds()).padStart(2, '0');
     const milliseconds = String(date.getMilliseconds()).padStart(3, '0');
     
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
+    return `${month}/${day}/${year} ${hours}:${minutes}`;
   }
   
