@@ -24,6 +24,8 @@ import {
 } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
 import { useModel } from "@/hooks/use-model-store";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 
 const formSchema = z.object({
@@ -52,17 +54,20 @@ const MessageFileModel = () => {
     }
 
     const isLoading = form.formState.isSubmitting;
+    const sendMessage = useMutation(api.messages.createMessage)
 
     const onSubmit = async(values: z.infer<typeof formSchema>) => {
         try {
-            // const url = qs.stringifyUrl({
-            //     url: apiUrl || "",
-            //     query
-            // })
-            // await axios.post(url, {
-            //     ...values,
-            //     content: values.fileUrl
-            // });
+
+            const messageData = {
+                content : values.fileUrl,
+                memberId : fileData?.memberId!,
+                username: fileData?.username!,
+                channelId: fileData?.channelId!,
+                fileUrl: values.fileUrl
+            }
+
+            await sendMessage(messageData)
 
             form.reset();
             router.refresh();

@@ -18,8 +18,6 @@ const FileUpload = ({ onChange, value, endpoint, type }: FileUploadProps) => {
     const [mimeType, setMimeType] = React.useState<string | null>(null);
     const fileType = value?.split(".").pop();
 
-    console.log("File type:", fileType);
-
     const handleUploadComplete = (res: any) => {
         if (res && res.length > 0) {
             const uploadedFile = res[0];
