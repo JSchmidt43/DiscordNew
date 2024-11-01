@@ -74,7 +74,6 @@ const MembersModel = () => {
     fetchProfile();
   }, []);
 
-
   // Update memberRef when profile or data changes
   useEffect(() => {
     if (server?.members && profile) {
@@ -87,7 +86,6 @@ const MembersModel = () => {
       }
     }
   }, [data, profile]);
-
 
   // Function to check if the current user has a higher role than the member
   const hasHigherRole = (currentRole: MemberRole, memberRole: MemberRole) => {
@@ -146,6 +144,13 @@ const MembersModel = () => {
     }
   };
 
+  const sortMembersByRole = (members: MemberWithProfiles[]) => {
+    return members?.sort((a: MemberWithProfiles, b: MemberWithProfiles) => {
+      return (roleHierarchy[b.role] || 0) - (roleHierarchy[a.role] || 0);
+    });
+  };
+  
+
   return (
     <>
     <Dialog open={isModelOpen && type === "members"} onOpenChange={onClose}>
@@ -170,7 +175,7 @@ const MembersModel = () => {
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="mt-8 max-h-[420px] pr-6">
-          {server?.members?.map((member: MemberWithProfiles) => (
+          {sortMembersByRole(server?.members)?.map((member: MemberWithProfiles) => (
             <div key={member?._id} className="flex items-center gap-x-2 mb-6">
               <div className="hover:cursor-pointer" onClick={()=>handleOpenUserInfo(member)}>
                 <UserAvatar src={member?.profile?.imageUrl}/>

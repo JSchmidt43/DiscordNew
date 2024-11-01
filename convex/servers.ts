@@ -1,6 +1,6 @@
 import { internalMutation, mutation, query } from "./_generated/server";
 import { v } from 'convex/values';
-import { createChannel, deleteChannelById, getAllChannelsByServerId } from "./channels";
+import { createChannel, deleteChannelById, getAllChannelsByServerId, getChannelById } from "./channels";
 import { createMember, deleteMemberById, getAllMembersByServerId, getMemberByServerIdAndProfileId } from "./members";
 import { getProfileById, updateProfileById } from "./profiles";
 import { Id } from '../convex/_generated/dataModel';
@@ -487,3 +487,27 @@ export const getAllServersByProfileId = query({
   },
 });
 
+export const getServerByChannelId = query({
+  args: {
+    channelId: v.string(), // Accepts the server ID as input
+  },
+  handler: async (ctx, { channelId }) => {
+    // Query the servers table to find the server matching the given channelId
+    const channel = await getChannelById(ctx, { channelId });
+
+    if (!channel.data) {
+      return { data: null, error: "Channel not found!!" };
+    }
+
+    const server = await ctx.db
+    .query("servers") // Assuming 'servers' is the table name
+    .filter(q => q.eq(q.field("_id"), channel.data.serverId)) // Filter by server ID
+    .first(); // Retrieve a single server
+
+    if (!server) {
+      return { data: null, error: "Server not found!!" };
+    }
+
+    return { data: server, message: "Server found"}; // Return the server object
+  },
+});

@@ -13,6 +13,7 @@ import ServerChoiceModel from "../models/server-choice-model"
 import EditChannelModel from "../models/edit-channel-model"
 import DeleteChannelModel from "../models/delete-channel-model"
 import MessageFileModel from "../models/message-file-model"
+import DeleteMessageModel from "../models/delete-message-model"
 
 
 export const ModelProvider = () => {
@@ -38,8 +39,8 @@ export const ModelProvider = () => {
             <EditChannelModel/>
             <DeleteChannelModel/>
             <MessageFileModel />
-            {/* 
             <DeleteMessageModel/>
+            {/* 
              */}
         </>
     )

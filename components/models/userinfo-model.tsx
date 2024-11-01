@@ -13,7 +13,7 @@ interface UserInfoModelProps {
     isOpen: boolean;
     onClose: () => void;
     memberProfile: MemberWithProfiles | null; // Profile data passed as prop
-    currentUser: Member | null
+    currentUser: Member | MemberWithProfiles | undefined
 }
 
 const roleIconMap = {
@@ -48,29 +48,29 @@ const UserInfoModel: React.FC<UserInfoModelProps> = ({ isOpen, onClose, memberPr
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="bg-white dark:bg-[#1e1f22] text-black dark:text-white">
                 <DialogHeader>
-                    <DialogTitle>Member Information</DialogTitle>
+                    <DialogTitle className="text-red-500">Member Information</DialogTitle>
                 </DialogHeader>
                 <div className="mt-4">
                     {memberProfile && (
                         <>
-                            <img src={memberProfile.profile.imageUrl} alt={memberProfile.profile.username} className="rounded-full w-20 h-20 mb-4 m-auto" />
+                            <img src={memberProfile?.profile?.imageUrl} alt={memberProfile?.profile?.username} className="rounded-full w-20 h-20 mb-4 m-auto" />
                             {canSeeMemberId() ? (
                                 <p>
-                                    <strong>Member ID:</strong> {memberProfile._id} {/* Assuming memberProfile has an id */}
+                                    <strong className="text-red-500">Member ID:</strong> {memberProfile._id || "*NOT FOUND*" }{/* Assuming memberProfile has an id */}
                                 </p>
                             ) : (
-                                <p><strong>Member ID:</strong> xxxxxxxxxxxxxxxxxxxxxxxxxx</p>
+                                <p><strong className="text-red-500">Member ID:</strong> xxxxxxxxxxxxxxxxxxxxxxxxxx</p>
                             )}
-                            <p><strong>Username:</strong> {memberProfile.profile.username}</p>
-                            <p><strong>Email:</strong> {memberProfile.profile.email}</p>
+                            <p><strong className="text-red-500">Username:</strong> {memberProfile?.profile?.username || "*NOT FOUND*"}</p>
+                            <p><strong className="text-red-500">Email:</strong> {memberProfile?.profile?.email || "*NOT FOUND*"}</p>
                             <div className="flex items-center">
-                                <p className="mr-2"><strong>Role:</strong> {memberProfile.role}</p>
+                                <p className="mr-2" ><strong className="text-red-500">Role:</strong> {memberProfile?.role || "*NOT FOUND*"}</p>
                                 {roleIconMap[memberProfile.role]} {/* Render the icon here */}
                             </div>        
-                            <p><strong>Current Status:</strong> {memberProfile.profile.status}</p>
+                            <p><strong className="text-red-500">Current Status:</strong> {memberProfile?.profile?.status || "*NOT FOUND*"}</p>
                                                
                             <p>
-                                <strong>Joined:</strong> {formatDate(new Date(memberProfile.createdAt))} {/* Format the date */}
+                                <strong className="text-red-500">Joined:</strong> {formatDate(new Date(memberProfile?.createdAt || "*NOT FOUND*"))} {/* Format the date */}
                             </p>
 
                         </>

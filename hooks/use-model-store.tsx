@@ -14,6 +14,10 @@ interface ModelData {
         channelId: string,
         serverId: string | undefined,
         memberId: string
+    },
+    deleteMessage?: {
+        memberId: string,
+        messageId: string
     }
 }
 

@@ -28,11 +28,9 @@ export const ChatMessages = ({
     serverId
 } : ChatMessageProps) => {
     const getMessages = useQuery(api.messages.getAllMessageByChannelId, { channelId }); // Prepare the mutation
-
     const chatRef = useRef<ElementRef<"div">>(null);
     const bottomRef = useRef<ElementRef<"div">>(null);
     const [systemMessages, setSystemMessages] = useState([]);
-
 
     return (
         <div ref={chatRef} className="flex-1 bg-grey-500 flex flex-col py-4 overflow-y-auto">
