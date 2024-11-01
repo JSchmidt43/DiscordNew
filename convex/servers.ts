@@ -4,6 +4,7 @@ import { createChannel, deleteChannelById, getAllChannelsByServerId, getChannelB
 import { createMember, deleteMemberById, getAllMembersByServerId, getMemberByServerIdAndProfileId } from "./members";
 import { getProfileById, updateProfileById } from "./profiles";
 import { Id } from '../convex/_generated/dataModel';
+import { deleteMessageById, deleteServerMessageById, getAllMessageByChannelId } from "./messages";
 
 //WORKS
 export const createServer = mutation({
@@ -217,7 +218,7 @@ export const deleteServerById = mutation({
     }
 
     const serverIdToDelete = serverId as Id<"servers">;
-    const deletedServer = await ctx.db.delete(serverIdToDelete);
+
 
     const deletemembers = await getAllMembersByServerId(ctx, { serverId});
     for(let member of deletemembers.data){
@@ -226,8 +227,14 @@ export const deleteServerById = mutation({
 
     const deleteChannels = await getAllChannelsByServerId(ctx, { serverId})
     for(let channel of deleteChannels.data){
+
+      const deleteMessages = await getAllMessageByChannelId(ctx, { channelId: channel._id});
+      for(let message of deleteMessages.data){
+        await deleteServerMessageById(ctx, {messageId: message._id})
+      }
       await deleteChannelById(ctx, { channelId: channel._id })
     }
+    await ctx.db.delete(serverIdToDelete);
 
     return { data: serverExists.data._id, message: "Server deleted"}
   },

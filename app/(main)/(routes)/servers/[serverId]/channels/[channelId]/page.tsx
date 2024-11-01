@@ -21,12 +21,18 @@ const ChannelIdPage = async ({
         return auth().redirectToSignIn();
     }
 
+    const server = await fetchQuery(api.servers.getServerById, { serverId: params.serverId});
+    
+
+    if(!server.data){
+        return redirect("/")
+    }
     const channel = await fetchQuery(api.channels.getChannelById, { channelId: params.channelId})
 
     const member = await fetchQuery(api.members.getMemberAndProfileByServerIdAndProfileId, { serverId: params.serverId, profileId: profile._id})
 
     if(!channel.data || !member.data){
-        redirect("/");
+        return redirect("/");
     }
 
     return (

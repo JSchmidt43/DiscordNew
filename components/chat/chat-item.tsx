@@ -3,7 +3,7 @@
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Member, MemberRole, Profile } from "@/types";
+import { MemberRole } from "@/types";
 import { UserAvatar } from "../user-avatar";
 import { Crown, Edit, FileIcon, ShieldAlert, ShieldCheck, Trash } from "lucide-react";
 import Image from "next/image";
@@ -23,6 +23,7 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { ActionTooltip } from "../action-toolkit";
 import UserInfoModel from "../models/userinfo-model";
+import { Separator } from "@/components/ui/separator";
 
 interface ChatItemProps {
   id: string;
@@ -73,7 +74,6 @@ export const ChatItem = ({
   const member = useQuery(api.members.getMemberById, { memberId: deletionActor as string })?.data
 
   const memberProfile = { ...member, profile }
-
   useEffect(() => {
     const handleKeyDown = (event: any) => {
       if (event.key === "Escape" || event.keyCode === 27) {
@@ -288,4 +288,3 @@ export const ChatItem = ({
     </div>
   );
 }
-

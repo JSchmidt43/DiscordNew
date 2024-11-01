@@ -83,6 +83,31 @@ export const deleteMessageById = mutation({
   },
 })
 
+export const deleteServerMessageById = mutation({
+  args: {
+    messageId: v.string(),
+  }, handler: async (ctx, { messageId }) => {
+    const messageIdToDelete = messageId as Id<"messages">;
+
+    const message = await getMessageById(ctx, { messageId })
+
+    if (!message.data) {
+      return { data: null, error: "Message not found to delete!" }
+    }
+
+    const server = await getServerByChannelId(ctx, { channelId: message.data.channelId })
+    
+    if(!server.data){
+      return { data: null, error: "Server not found"}
+    }
+
+    const messageDeleted = await ctx.db.delete(messageIdToDelete);
+
+
+    return { data:messageDeleted, message: `Server Message deleted` }
+  },
+})
+
 export const updateMessageById = mutation({
   args: { 
     messageId: v.string(), 

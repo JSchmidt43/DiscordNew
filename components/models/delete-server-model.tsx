@@ -11,9 +11,11 @@ import {
 import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { Input } from "../ui/input";
 import { Member, MemberRole, ServerWithChannelsWithMembers } from "@/types";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 const DeleteServerModel = () => {
   const { isOpen, onClose, type, data } = useModel();
@@ -40,11 +42,12 @@ const DeleteServerModel = () => {
       }
     }
   }, [server?.name, server?.imageUrl]);
+  const deleteServer = useMutation(api.servers.deleteServerById)
 
   const onDeleteClick = async () => {
     try {
-      setIsLoading(true);
-      await axios.delete(`/api/servers/${server?._id}`);
+      await deleteServer({serverId: server._id})
+      return redirect("/")
       router.refresh();
       onClose();
     } catch (error) {

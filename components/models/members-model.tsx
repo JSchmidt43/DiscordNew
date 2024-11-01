@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Member, MemberRole, MemberWithProfiles, Profile, ServerWithChannelsWithMembers, ServerWithMembersWithProfiles } from "@/types";
+import { Member, MemberRole, MemberWithProfiles, Profile, roleHierarchy, ServerWithChannelsWithMembers, ServerWithMembersWithProfiles } from "@/types";
 import { ScrollArea } from "../ui/scroll-area";
 import { UserAvatar } from "../user-avatar";
 import { Check, Crown, Loader2, MoreVertical, Shield, ShieldAlert, ShieldCheck, ShieldQuestion, UserMinusIcon } from "lucide-react";
@@ -17,8 +17,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal
 import UserInfoModel from "./userinfo-model";
 import axios from "axios";
 import qs from "query-string";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
 
 const roleIconMap = {
   GUEST: null,
@@ -27,13 +25,6 @@ const roleIconMap = {
   CREATOR: <Crown className="h-4 w-4 text-yellow-500" />
 };
 
-// Define role hierarchy
-const roleHierarchy = {
-  CREATOR: 4,
-  ADMIN: 3,
-  MODERATOR: 2,
-  GUEST: 1
-};
 
 const MembersModel = () => {
   const { onOpen, isOpen, onClose, type, data } = useModel();

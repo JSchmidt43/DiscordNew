@@ -91,3 +91,10 @@ export type MemberWithProfiles = Member & {
   profile: Profile; // Define that each member has a profile
 };
 
+// Define role hierarchy
+export const roleHierarchy = {
+  CREATOR: 4,
+  ADMIN: 3,
+  MODERATOR: 2,
+  GUEST: 1
+};

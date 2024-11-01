@@ -209,30 +209,30 @@ export const updateStatusById = mutation({
   },
 });
 
-export const get_profiles_By_Ids = query({
-  args: {
-    profileIds: v.array(v.string()), // Accepts an array of profile IDs as input
-  },
-  handler: async (ctx, { profileIds }) => {
-    if (profileIds.length === 0){
-      return { data: null, error : "Array empty"}
-    }
+// export const get_profiles_By_Ids = query({
+//   args: {
+//     profileIds: v.array(v.string()), // Accepts an array of profile IDs as input
+//   },
+//   handler: async (ctx, { profileIds }) => {
+//     if (profileIds.length === 0){
+//       return { data: null, error : "Array empty"}
+//     }
 
-     // Use map to create an array of promises
-     const profilePromises = profileIds.map(async (profileId) => {
-      const profile = await ctx.db.query('profiles')
-        .filter(q => q.eq(q.field('_id'), profileId))
-        .first(); // Retrieve a single profile
-      return profile; // Return the profile (or null if not found)
-    });
+//      // Use map to create an array of promises
+//      const profilePromises = profileIds.map(async (profileId) => {
+//       const profile = await ctx.db.query('profiles')
+//         .filter(q => q.eq(q.field('_id'), profileId))
+//         .first(); // Retrieve a single profile
+//       return profile; // Return the profile (or null if not found)
+//     });
 
-    // Wait for all promises to resolve
-    const profiles = await Promise.all(profilePromises);
+//     // Wait for all promises to resolve
+//     const profiles = await Promise.all(profilePromises);
 
-    return { data: profiles, message: "Success"};
+//     return { data: profiles, message: "Success"};
 
-  },
-});
+//   },
+// });
 
 /*
 export const deleteAllProfiles = mutation({

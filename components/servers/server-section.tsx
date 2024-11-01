@@ -7,7 +7,7 @@ import { useModel } from "@/hooks/use-model-store";
 
 interface ServerSectionProps {
     label:string;
-    role?: MemberRole;
+    role?: MemberRole | string;
     sectionType: "channels" | "members";
     channelType?: ChannelType;
     server?: ServerWithMembersWithProfiles;
