@@ -52,27 +52,31 @@ const ServerSidebar = ({
     (channel: Channel) => channel.type === ChannelType.VIDEO
   );
 
+
   // Extract profileIds from members
   const role = server?.members.find((member: Member) => member.profileId === profileId)
     ?.role;
 
-  // Extract profileIds from members
-  const profileIds: string[] = server?.members.map((member: Member) => member.profileId)!;
+  // Extract profile IDs if server members exist
+  const profileIds: string[] = server?.members?.map((member: Member) => member.profileId) || [];
 
-  const profilesWithStatus = useQuery(api.profiles.get_profiles_By_Ids, {
-    profileIds
-  })?.data
 
-  // Pass initial data to the client component
-  const membersWithStatus = server?.members.map((member) => {
+   // Always call useQuery, but provide an empty array as a fallback if profileIds is empty
+   const profilesWithStatus = useQuery(api.profiles.get_profiles_By_Ids, {
+    profileIds: profileIds.length > 0 ? profileIds : []
+  })?.data || [];
+
+
+  // Process members with their statuses
+  const membersWithStatus = server?.members?.map((member) => {
     const profileStatus = profilesWithStatus?.find(
-      (profile) => profile?._id === member.profileId
+      (profile: any) => profile?._id === member.profileId
     );
     return {
       ...member,
-      profile: profileStatus || null, // Attach full profile, or null if not found
+      profile: profileStatus || null,
     };
-  });
+  }) || [];
 
   const sortMembersByRole = (members: any[]) => {
     return members?.sort((a: any, b: any) => {

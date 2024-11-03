@@ -25,8 +25,6 @@ export const NavigationSideBar = ({ profileId }: { profileId: string }) => {
     })?.data;
 
     const profile = useQuery(api.profiles.getProfileById, { profileId })?.data
-    console.log(profile)
-
     return (
         <div className=" flex flex-col items-center
         h-full text-primary w-full dark:bg-[#1E1F22] bg-[#E3E5E8]">
@@ -43,7 +41,7 @@ export const NavigationSideBar = ({ profileId }: { profileId: string }) => {
                             imageUrl={server?.imageUrl} />
                     </div>
                 ))}
-                <NavigationAction />
+                <NavigationAction profile={profile!}/>
             </ScrollArea>
             <div className="pb-3 mt-auto flex items-center flex-col gap-y-4">
                 <ModeToggle />

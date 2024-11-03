@@ -41,7 +41,7 @@ const InviteCodePage = async ({
 
 
     if(createdMember.data){
-        return redirect(`/servers/${createdMember.data!._id}`);
+        return redirect(`/servers/${createdMember.data!.serverId}`);
     }
 
     // return null;

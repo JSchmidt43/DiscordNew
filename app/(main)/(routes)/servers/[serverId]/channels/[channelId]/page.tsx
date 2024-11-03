@@ -17,27 +17,27 @@ const ChannelIdPage = async ({
     params
 }: ChannelIdPageProps) => {
     const profile = await currentProfile();
-    if(!profile) {
+    if (!profile) {
         return auth().redirectToSignIn();
     }
 
-    const server = await fetchQuery(api.servers.getServerById, { serverId: params.serverId});
-    
+    const server = await fetchQuery(api.servers.getServerById, { serverId: params.serverId });
 
-    if(!server.data){
+
+    if (!server.data) {
         return redirect("/")
     }
-    const channel = await fetchQuery(api.channels.getChannelById, { channelId: params.channelId})
+    const channel = await fetchQuery(api.channels.getChannelById, { channelId: params.channelId })
 
-    const member = await fetchQuery(api.members.getMemberAndProfileByServerIdAndProfileId, { serverId: params.serverId, profileId: profile._id})
+    const member = await fetchQuery(api.members.getMemberAndProfileByServerIdAndProfileId, { serverId: params.serverId, profileId: profile._id })
 
-    if(!channel.data || !member.data){
+    if (!channel.data || !member.data) {
         return redirect("/");
     }
 
     return (
         <div className="bg-white dark:bg-[#313338] flex flex-col h-full">
-            <ChatHeader 
+            <ChatHeader
                 name={channel.data.name}
                 serverId={channel.data.serverId}
                 type="channel"

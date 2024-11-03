@@ -23,7 +23,6 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { ActionTooltip } from "../action-toolkit";
 import UserInfoModel from "../models/userinfo-model";
-import { Separator } from "@/components/ui/separator";
 
 interface ChatItemProps {
   id: string;

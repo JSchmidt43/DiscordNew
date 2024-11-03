@@ -11,7 +11,6 @@ import { useRouter } from "next/navigation";
 import { api } from "@/convex/_generated/api";
 import { EmojiPicker } from "../emoji-picker";
 import { useMutation } from "convex/react";
-import { useRef } from "react";
 
 interface ChatInputProps {
     channelId: string;

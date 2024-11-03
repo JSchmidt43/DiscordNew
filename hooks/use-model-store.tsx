@@ -15,6 +15,7 @@ interface ModelData {
         serverId: string | undefined,
         memberId: string
     },
+    profile?: Profile,
     deleteMessage?: {
         memberId: string,
         messageId: string

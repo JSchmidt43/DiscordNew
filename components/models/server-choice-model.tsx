@@ -4,25 +4,27 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Separator } from "../ui/separator";
 
 const ServerChoiceModel = () => {
-  const { onOpen, onClose, isOpen, type } = useModel();
+  const { onOpen, onClose, isOpen, type, data } = useModel();
   
+  const { profile }  = data;
+
   // Check if the modal should be open
   const isModelOpen = isOpen && type === "serverChoice";
 
   const handleCreateServer = () => {
     onClose(); // Close the choice model
-    onOpen("createServer"); // Open create server model
+    onOpen("createServer", { profile }); // Open create server model
   };
 
   const handleJoinServer = () => {
     onClose(); // Close the choice model
-    onOpen("joinServer"); // Open join server model
+    onOpen("joinServer",  { profile }); // Open join server model
   };
 
   return (
     <Dialog open={isModelOpen} onOpenChange={onClose}>
+      <DialogTitle></DialogTitle>    
       <DialogContent className="bg-white dark:bg-[#383338] text-black dark:text-white p-0 overflow-hidden">
-        
         
         <div className="flex justify-center">
           {/* Left div: Join a Server */}

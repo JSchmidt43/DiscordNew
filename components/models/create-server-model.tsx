@@ -5,7 +5,7 @@ import FileUpload from "../file-upload";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
 
 import {
   Dialog,
@@ -36,8 +36,10 @@ const formSchema = z.object({
 });
 
 const CreateServerModel = () => {
-  const { isOpen, onClose, type } = useModel();
+  const { isOpen, onClose, type, data } = useModel();
   const router = useRouter();
+
+  const { profile } = data;
 
   const isModelOpen = isOpen && type === "createServer";
 
@@ -56,11 +58,19 @@ const CreateServerModel = () => {
     try {
       const imageUrl =
         values.imageUrl ||
-        "https://utfs.io/f/87baf7de-9eb8-4f1a-95e8-1db535298d4d-rn3h9o.png";
-      const response = await axios.post("/api/servers", { ...values, imageUrl });
-      const data = response.data;
+        "https://pics.craiyon.com/2023-06-26/67260b983e9d46bbb01fcfc8be177570.webp"      
+      if(profile){
+        const data = { 
+          name: values.name,
+          imageUrl,
+          inviteCode: uuidv4(),
+          creatorId: profile._id
+        }
+        const createdServer = await createServerMutation(data)
+        router.push(`/servers/${createdServer.data?._id}`)
+
+      }
       //console.log(data);
-      const result = await createServerMutation(data);
       form.reset();
       router.refresh();
       onClose();
@@ -140,3 +150,5 @@ const CreateServerModel = () => {
 };
 
 export default CreateServerModel;
+
+

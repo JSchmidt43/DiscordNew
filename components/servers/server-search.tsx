@@ -85,6 +85,7 @@ export const ServerSearch = ({
                                     {data?.map(({id, icon, name})=> {
                                         return(
                                             <CommandItem key={id}
+                                            className="hover:cursor-pointer"
                                              onSelect={()=>onClick({ id, type})}>
                                                 {icon}
                                                 <span>{name}</span>

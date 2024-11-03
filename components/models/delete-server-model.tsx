@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { redirect, useRouter } from "next/navigation";
 import { Input } from "../ui/input";
 import { Member, MemberRole, ServerWithChannelsWithMembers } from "@/types";
@@ -47,7 +46,6 @@ const DeleteServerModel = () => {
   const onDeleteClick = async () => {
     try {
       await deleteServer({serverId: server._id})
-      return redirect("/")
       router.refresh();
       onClose();
     } catch (error) {

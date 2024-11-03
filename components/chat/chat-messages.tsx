@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChatItem } from "./chat-item";
 import { useRef, ElementRef } from "react";
 import { useQuery } from "convex/react";
@@ -45,6 +45,13 @@ export const ChatMessages = ({
 
     const groupedMessages = groupMessagesByDate(getMessages?.data || []);
 
+    // Scroll to the bottom whenever messages change
+    useEffect(() => {
+        if (bottomRef.current) {
+            bottomRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [getMessages?.data]);
+
     return (
         <div ref={chatRef} className="flex-1 bg-grey-500 flex flex-col py-4 overflow-y-auto">
             <div className="flex flex-col mt-auto">
@@ -58,7 +65,7 @@ export const ChatMessages = ({
                             <span className="mx-4 text-xs text-zinc-600 dark:text-zinc-500 font-semibold">{date}</span>
                             <hr className="flex-grow border-t border-gray-500" />
                         </div>
-                        {groupedMessages[date].map((message : any) => (
+                        {groupedMessages[date].map((message: any) => (
                             <ChatItem
                                 key={message._id}
                                 id={message._id}
@@ -74,6 +81,8 @@ export const ChatMessages = ({
                         ))}
                     </div>
                 ))}
+                {/* Ref div at the bottom of the chat to ensure it always scrolls here */}
+        <div ref={bottomRef} />
             </div>
         </div>
     );

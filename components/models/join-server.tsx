@@ -75,7 +75,6 @@ const JoinServerModel = () => {
 
 
         window.location.href = serverLink; // Set the URL to the serverLink
-        
       } else {
         // If the server does not exist, show an error message
         setErrorMessage("Server not found! Please check your invite link.");

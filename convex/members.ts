@@ -51,10 +51,6 @@ export const deleteMemberById = mutation({
       return { data: null, error: "Server not found with the member" }
     }
 
-    if (member.data.profileId === server.data?.creatorId) {
-      return { data: null, error: "Cannot remove the creator" }
-    }
-
     await ctx.db.delete(memberIdToDelete);
 
     await removeMemberFromServerById(ctx, { memberId, serverId: member.data.serverId })
@@ -88,7 +84,7 @@ export const updateRoleById = mutation({
       return { data: null, error: "Cannot update the role of the creator" }
     }
 
-    const updateMember = await ctx.db.patch(member.data._id, { role });
+    await ctx.db.patch(member.data._id, { role });
 
     const updatedMember = await getMemberById(ctx, { memberId })
 
