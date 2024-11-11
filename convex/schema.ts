@@ -66,4 +66,13 @@ export default defineSchema({
     createdAt: v.number(), // Creation date
     updatedAt: v.number(), // Last updated date
   }),
+
+  systemMessages: defineTable({
+    content: v.string(), // Message content
+    action: v.string(),
+    memberId: v.string(),
+    profileId: v.string(),
+    serverId: v.string(), // ID of the server
+    createdAt: v.number(), // Creation date
+  }),
 });

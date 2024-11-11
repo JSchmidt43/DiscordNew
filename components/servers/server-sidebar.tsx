@@ -3,7 +3,7 @@
 import { api } from '@/convex/_generated/api';
 import { Channel, ChannelType, Member, MemberRole, MemberWithProfiles, roleHierarchy, ServerWithChannelsWithMembers } from '@/types';
 import { Crown, Hash, Mic, ShieldAlert, ShieldCheck, Video } from 'lucide-react';
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ServerHeader } from './server-header';
 import { useQuery } from 'convex/react';
 import { ScrollArea } from '../ui/scroll-area';
@@ -61,8 +61,8 @@ const ServerSidebar = ({
   const profileIds: string[] = server?.members?.map((member: Member) => member.profileId) || [];
 
 
-   // Always call useQuery, but provide an empty array as a fallback if profileIds is empty
-   const profilesWithStatus = useQuery(api.profiles.get_profiles_By_Ids, {
+  // Always call useQuery, but provide an empty array as a fallback if profileIds is empty
+  const profilesWithStatus = useQuery(api.profiles.get_profiles_By_Ids, {
     profileIds: profileIds.length > 0 ? profileIds : []
   })?.data || [];
 
@@ -83,6 +83,24 @@ const ServerSidebar = ({
       return (roleHierarchy[b.role] || 0) - (roleHierarchy[a.role] || 0);
     });
   };
+
+  const systemMessages = useQuery(api.systemMessages.getAllMessageByServerId, { serverId })?.data
+  const member = useQuery(api.members.getMemberByServerIdAndProfileId, { profileId, serverId })?.data
+
+  useEffect(() => {
+    // Check if any system message has action 'KICK' and memberId matches the current user's memberId
+    const kickedMessage = systemMessages?.find(
+      (sys) => sys.action === "KICK" && sys.memberId === member?._id
+    );
+
+    if(kickedMessage){
+      window.location.reload(); // Refresh the page to handle the kick (or redirect to another page if necessary)
+    }
+
+  }, [systemMessages?.length, member?._id]); // Only logs when length changes
+
+
+
 
 
   return (

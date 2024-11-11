@@ -20,6 +20,7 @@ import type * as members from "../members.js";
 import type * as messages from "../messages.js";
 import type * as profiles from "../profiles.js";
 import type * as servers from "../servers.js";
+import type * as systemMessages from "../systemMessages.js";
 import type * as utils_formatDate from "../utils/formatDate.js";
 
 /**
@@ -36,6 +37,7 @@ declare const fullApi: ApiFromModules<{
   messages: typeof messages;
   profiles: typeof profiles;
   servers: typeof servers;
+  systemMessages: typeof systemMessages;
   "utils/formatDate": typeof utils_formatDate;
 }>;
 export declare const api: FilterApi<

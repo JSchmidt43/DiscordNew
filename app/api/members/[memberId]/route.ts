@@ -24,9 +24,20 @@ export async function DELETE (
             return new NextResponse("Member not found", { status: 400})
         }
 
+        const memberProfile = (await fetchQuery(api.profiles.getProfileById, { profileId: member.data?.profileId!}))?.data
+        const systemMessage = await fetchMutation(api.systemMessages.createMessage, {
+            action: "KICK",
+            content: `${memberProfile?.username} has been kicked from the server!`,
+            serverId: member.data?.serverId!,
+            memberId: member.data?._id!,
+            profileId: memberProfile?._id!
+        }) 
+
         const kickedMember = await fetchMutation(api.members.deleteMemberById, { memberId: params.memberId})
 
         const server = await fetchQuery(api.servers.getServerWithMembersAndChannelsByServerId, { serverId: member.data?.serverId!})
+
+
 
         return NextResponse.json(server)
         

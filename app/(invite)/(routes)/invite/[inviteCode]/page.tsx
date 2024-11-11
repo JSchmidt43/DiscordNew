@@ -41,6 +41,14 @@ const InviteCodePage = async ({
 
 
     if(createdMember.data){
+        const memberProfile = (await fetchQuery(api.profiles.getProfileById, { profileId: createdMember.data.profileId}))?.data
+        const systemMessage = await fetchMutation(api.systemMessages.createMessage, {
+            action: "JOIN",
+            content: `${memberProfile?.username} joined the server.`,
+            serverId: createdMember.data.serverId,
+            profileId: memberProfile?._id!,
+            memberId: createdMember.data._id
+        })
         return redirect(`/servers/${createdMember.data!.serverId}`);
     }
 

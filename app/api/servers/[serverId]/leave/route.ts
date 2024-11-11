@@ -26,14 +26,23 @@ export async function PATCH(
         if (!member.data) {
             return new NextResponse("Member not found in this server", { status: 404 });
         }
+        const server = await fetchQuery(api.servers.getServerById, {
+            serverId: member.data.serverId
+        })
+
+        const memberProfile = (await fetchQuery(api.profiles.getProfileById, { profileId: member.data.profileId}))?.data
+        const systemMessage = await fetchMutation(api.systemMessages.createMessage, {
+            action: "LEAVE",
+            content: `${memberProfile?.username} left the server.`,
+            serverId: member.data.serverId,
+            memberId:member.data._id,
+            profileId: memberProfile?._id!
+        })
 
         const deletedMember = await fetchMutation(api.members.deleteMemberById, {
             memberId: member.data._id
         })
 
-        const server = await fetchQuery(api.servers.getServerById, {
-            serverId: member.data.serverId
-        })
 
         return NextResponse.json(server)
         

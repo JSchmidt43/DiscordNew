@@ -17,6 +17,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal
 import UserInfoModel from "./userinfo-model";
 import axios from "axios";
 import qs from "query-string";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 const roleIconMap = {
   GUEST: null,
@@ -30,17 +32,17 @@ const MembersModel = () => {
   const { onOpen, isOpen, onClose, type, data } = useModel();
   const [loadingId, setLoadingId] = useState("");
   const [isUserInfoOpen, setUserInfoOpen] = useState(false); // State for user info dialog
-  const [selectedProfile, setSelectedProfile] = useState<MemberWithProfiles | null>(null); // Selected profile data
-
-  const isModelOpen = isOpen && type === "members";
-  const { server } = data as { server: ServerWithChannelsWithMembers };
-  const router = useRouter();
-  const memberRef = useRef(null);
-
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [renderKey, setRenderKey] = useState(0);
+  const [renderKey, setRenderKey] = useState(0);  const [selectedProfile, setSelectedProfile] = useState<MemberWithProfiles | null>(null); // Selected profile data
+
+  const isModelOpen = isOpen && type === "members";
+  const router = useRouter();
+
+  const { server } = data as { server: ServerWithChannelsWithMembers };
+
+  const memberRef = useRef(null);
 
   // Fetch the user's profile data
   useEffect(() => {
@@ -120,6 +122,7 @@ const MembersModel = () => {
   const onKick = async (memberId: string) => {
     try {
       setLoadingId(memberId);
+
       const url = qs.stringifyUrl({
         url: `/api/members/${memberId}`
       });

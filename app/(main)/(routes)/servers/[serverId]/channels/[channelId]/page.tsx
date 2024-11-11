@@ -47,6 +47,7 @@ const ChannelIdPage = async ({
                 name={channel.data.name}
                 channelId={channel.data._id}
                 type="channel"
+                serverId={params.serverId}
             />
             <ChatInput
                 name={channel.data.name}
