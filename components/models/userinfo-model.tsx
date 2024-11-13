@@ -26,15 +26,15 @@ const roleIconMap = {
 const UserInfoModel: React.FC<UserInfoModelProps> = ({ isOpen, onClose, memberProfile, currentUser }) => {
     // Function to determine if the current user can see the member ID
     const canSeeMemberId = () => {
-        if (!currentUser) return false;
-
+        if (!currentUser || !memberProfile) return false;
+    
         // If the current user is a Creator, they can see all member IDs
         if (currentUser.role === MemberRole.CREATOR) return true;
-
+    
         // All other roles can see their own ID and others' IDs except for Creators
         return memberProfile?.role !== MemberRole.CREATOR;
     };
-
+    
     // Format date to a readable string
     const formatDate = (date: Date) => {
         return date.toLocaleDateString("en-US", {

@@ -60,6 +60,35 @@ export interface Message {
     createdAt: number; // Creation date
     updatedAt: number; // Last updated date
 }
+
+export interface Report {
+  id: string;               // Unique identifier for the report
+  title: string;            // Title of the report
+  description: string;      // Detailed description of the report
+  status: "unsolved" | "solved"; // Status of the report (either unsolved or solved)
+  date: string;             // Date when the report was created
+  createdBy: string;        // ID of the user who created the report
+  serverId: string;         // ID of the server the report belongs to
+  actionsTaken?: string[];  // An optional list of actions that have been taken on this report (e.g., "reported to moderator", "investigated", etc.)
+}
+
+export interface FriendRequestWithProfile {
+  _id: string;
+  createdAt: number;
+  updatedAt: number;
+  sender: string;
+  receiver: string;
+  status: string;
+  senderProfile: {
+      _id: string;
+      username: string;
+      name: string;
+      email: string;
+      imageUrl: string;
+      // Include any other profile fields you need
+  } | null;
+}
+
   
 export enum ChannelType {
   TEXT = "TEXT",

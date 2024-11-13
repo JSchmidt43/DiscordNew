@@ -16,9 +16,11 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Button } from "./ui/button";
 import { useEffect, useState } from "react";
 import { Textarea } from "@/components/ui/textarea"
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-
+import { DialogTitle } from "@radix-ui/react-dialog";
+import toast from "react-hot-toast";
+import { FriendRequestWithProfile, Profile } from "@/types";
 
 const statuses = [
     '🟢 Online',
@@ -30,7 +32,7 @@ const statuses = [
 ]
 
 const addFriendFormSchema = z.object({
-    email: z.string().min(1, {message: 'Email is required'}).email(),
+    username: z.string().min(1, {message: 'Username is required!'}),
 })
 
 const ProfileDialogContent = ({profile } : any) => {
@@ -50,20 +52,60 @@ const ProfileDialogContent = ({profile } : any) => {
     const form = useForm<z.infer<typeof addFriendFormSchema>>({
         resolver: zodResolver(addFriendFormSchema),
         defaultValues: {
-            email: ''
+            username: ''
         }
     });
 
-    async function onSubmit({ email }:z.infer<typeof addFriendFormSchema>){
-        console.log(email)
+    // Call the query at the top level and let it run whenever 'username' value from the form changes.
+    const username = form.watch('username');
+    const receiverUser = useQuery(api.profiles.getProfileByUsername, { username })?.data;
+    const sendRequest = useMutation(api.friends.sendFriendRequest);
+
+    const onSubmit = async ({ username }:z.infer<typeof addFriendFormSchema>) => {
+        try {
+            if (!receiverUser) {
+                // If the user doesn't exist, show an error message in the form
+                form.setError("username", {
+                    type: "manual",
+                    message: "User not found! Please check the username.",
+                });
+                return; // Exit if the user does not exist
+            }
+
+            const sendRequestResponse = await sendRequest({
+                senderProfileId: profile._id,
+                receiverProfileId: receiverUser._id
+            });
+
+            if (sendRequestResponse.data) {
+                // Show toaster message
+                toast.success("Friend request sent successfully!");
+            } 
+            else if (sendRequestResponse.sameError){
+                toast.error("Cannot send friend request to yourself.");
+
+            }
+            
+            else if(sendRequestResponse.error) {
+                toast("Friend request already sent.", {
+                    icon: '👏'
+                });
+            }
+
+        } catch (error) {
+            console.log(error)
+            toast.error("An error occurred while sending the request.");
+
+        }
+        
     }
 
     const isStatusChanged = status !== temporaryStatus;
     const statusUpdate = useMutation(api.profiles.updateStatusById);
+    const friendRequests = profile ? useQuery(api.friends.getFriendRequestsById, { profileId: profile._id })?.data : [];
 
     const handleUpdateStatus = async () => {
-        try {
-            
+        try {           
             await statusUpdate({ 
                 profileId: profile._id,
                 status: temporaryStatus
@@ -76,7 +118,7 @@ const ProfileDialogContent = ({profile } : any) => {
             console.log(error);
         }
     };
-    
+
     return (
     <div>
         <Card className="border-0 bg-transparent flex flex-col space-y-4">
@@ -110,6 +152,7 @@ const ProfileDialogContent = ({profile } : any) => {
 
             <Separator/>
             <Dialog>
+                <DialogTitle></DialogTitle>
                 <DialogTrigger>
                     <div className="flex items-center space-x-2">
                         <UserRoundSearch/>
@@ -119,18 +162,20 @@ const ProfileDialogContent = ({profile } : any) => {
                 <DialogContent>
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                            <FormField control={form.control} name='email' 
+                            <FormField control={form.control} name='username' 
                             render={({field})=><FormItem>
-                                <FormLabel>Email</FormLabel>
+                                <FormLabel className="text-black dark:text-white">Username</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="friend@email.com" disabled={true} {...field}/>
+                                    <Input placeholder="JohnDoe123" {...field}/>
                                 </FormControl>
                                 <FormDescription>
-                                    Enter your friend&apos;s email to send a friend request.
+                                    Enter your friend&apos;s username to send a friend request.
                                 </FormDescription>
                                 <FormMessage />
                             </FormItem>}/>
-                            <Button type="submit" disabled={true}>Submit</Button>
+                            <Button type="submit" disabled={!form.formState.isValid}>          
+                                Send
+                            </Button>
                         </form>
                     </Form>
                 </DialogContent>
@@ -140,11 +185,20 @@ const ProfileDialogContent = ({profile } : any) => {
                 <DialogTrigger>
                     <div className="flex items-center space-x-2">
                         <Handshake/>
-                        <p>View Friend request</p>
+                        <p>View Friend requests</p>
                     </div>
                 </DialogTrigger>
-                <DialogContent>
-                    <p className="text-xl text-center font-bold">No friend request yet</p>
+                <DialogContent  className="max-h-[400px] overflow-y-auto overflow-x-hidden" >
+                    <div className="pr-6 -mb-6"> {/* Add padding-right to add space between the scrollbar and the content */}
+                    <p> <b>Friend Requests</b></p>
+                            {friendRequests && friendRequests.length > 0 ? (
+                            friendRequests.map((request) => (
+                                <FriendRequest key={request._id} request={request} />
+                            ))
+                        ) : (
+                            <p className="text-sm">No friend requests.</p>
+                        )}
+                   </div>
                 </DialogContent>
             </Dialog>
             <Separator/>
@@ -183,6 +237,59 @@ const ProfileDialogContent = ({profile } : any) => {
         </div>
     </div>)
 };
+
+// Component to handle each friend request and fetch sender profile
+const FriendRequest = ({ request }: { request: FriendRequestWithProfile }) => {
+    const senderProfile = useQuery(api.profiles.getProfileById, { profileId: request.sender })?.data;
+    // Move the useMutation hooks outside of the conditional rendering
+    const acceptRequest = useMutation(api.friends.acceptFriendRequest);
+    const declineRequest = useMutation(api.friends.declineFriendRequest);
+
+    if (!senderProfile) {
+        return <p>Loading sender profile...</p>;
+    }
+
+    // Example functions for handling the accept and decline actions
+    const handleAccept = (requestId: string, senderProfile: Profile) => {
+        acceptRequest({ requestId });
+        toast.success(`You are now friends with ${senderProfile.username}.`)
+        console.log("Accepted request with ID:", requestId);
+    };
+
+    const handleDecline = async (requestId: string) => {
+        declineRequest({ requestId })
+        console.log("Declined request with ID:", requestId);
+    };
+
+    return (
+        <div key={request._id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-transparent rounded-lg shadow-md -ml-4">
+            {/* Avatar and user info */}
+            <div className="flex items-center flex-grow">
+                <Avatar className="h-12 w-12 mr-4">
+                    <AvatarImage src={senderProfile.imageUrl} />
+                    <AvatarFallback>{senderProfile.username.charAt(0).toUpperCase()}</AvatarFallback>
+                </Avatar>
+                <div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{senderProfile.username}</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{senderProfile.email}</p>
+                </div>
+            </div>
+            
+            {/* Action buttons */}
+            <div className="flex space-x-3 ml-4">
+                <Button variant="primary" onClick={() => handleAccept(request._id, senderProfile)} className="bg-green-500 hover:bg-green-600">
+                    Accept
+                </Button>
+                <Button variant="secondary" onClick={() => handleDecline(request._id, senderProfile)} className="bg-red-500 hover:bg-red-600">
+                    Decline
+                </Button>
+            </div>
+        </div>
+    );
+};
+
+
+
 
 
 export default ProfileDialogContent;

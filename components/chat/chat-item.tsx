@@ -1,11 +1,11 @@
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { MemberRole } from "@/types";
+import { MemberRole, roleHierarchy } from "@/types";
 import { UserAvatar } from "../user-avatar";
 import { Crown, Edit, FileIcon, ShieldAlert, ShieldCheck, Trash } from "lucide-react";
 import Image from "next/image";
-import { act, useEffect, useState } from "react";
+import { act, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -62,9 +62,14 @@ export const ChatItem = ({
   const [imageFailed, setImageFailed] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState<MemberWithProfiles | null>(null); // Selected profile data
 
+  const memberRef = useRef(null);
+
   const profile = useQuery(api.profiles.getProfileByMemberId, {
     memberId: deletionActor || '', // Default to empty string if undefined
   })?.data;
+
+  memberRef.current = currentMember;
+  
 
   const member = useQuery(api.members.getMemberById, {
     memberId: deletionActor || '', // Same here
@@ -140,7 +145,6 @@ export const ChatItem = ({
   // Check if this message is a system message
   const isSystemMessage = !username && action?.trim() !== ""; // Check if there's no username and action is not empty
 
-
   return (
     <div
       className="relative group flex items-center hover:bg-black/5 p-4 transition w-full"
@@ -166,13 +170,15 @@ export const ChatItem = ({
             <div className="flex items-center">
               {/* Show username only if not a system message */}
               {!isSystemMessage && (
-                <p className="font-semibold text-sm mr-1">
-                  <span className="text-black dark:text-white">
-                    {username || "User not found"}
-                  </span>
-                </p>
+                <>
+                  <p className="font-semibold text-sm mr-1">
+                    <span className="text-black dark:text-white">
+                      {username || "User not found"}
+                    </span>
+                  </p>
+                  {roleIconMap[member?.role]}
+                </>
               )}
-              {roleIconMap[member?.role]}
             </div>
             {/* Show timestamp only if not a system message */}
             {!isSystemMessage && (
@@ -201,7 +207,7 @@ export const ChatItem = ({
                   )}
                 >
                   <p>{content} -- {timestamp?.slice(-5)}</p>
-                  </div>
+                </div>
               )}
               {action === "JOIN" && (
                 <div
@@ -210,7 +216,7 @@ export const ChatItem = ({
                   )}
                 >
                   <p>{content} -- {timestamp?.slice(-5)}</p>
-                  </div>
+                </div>
               )}
               {/* Fallback for other system messages */}
               {!["KICK", "LEAVE", "JOIN"].includes(action) && (
@@ -308,6 +314,12 @@ export const ChatItem = ({
           )}
         </div>
       </div>
+      <UserInfoModel
+        isOpen={isUserInfoOpen}
+        onClose={() => setUserInfoOpen(false)}
+        memberProfile={selectedProfile}
+        currentUser={memberRef.current}
+      />
     </div>
   );
 };

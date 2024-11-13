@@ -12,6 +12,7 @@ import { Separator } from '../ui/separator';
 import { ServerSection } from './server-section';
 import { ServerChannel } from './server-channel';
 import { ServerMember } from './server-member';
+import toast from "react-hot-toast";
 
 interface ServerSidebarProps {
   serverId: string;
@@ -93,15 +94,14 @@ const ServerSidebar = ({
       (sys) => sys.action === "KICK" && sys.memberId === member?._id
     );
 
-    if(kickedMessage){
-      window.location.reload(); // Refresh the page to handle the kick (or redirect to another page if necessary)
-    }
+    if (kickedMessage) {
+      toast.error(`You have been kicked out of the server '${server?.name}'`); // Show toaster notification
+      setTimeout(() => {
+          window.location.reload(); // Refresh the page after a brief delay
+      }, 3000); // Delay to allow the user to read the message
+  }
 
   }, [systemMessages?.length, member?._id]); // Only logs when length changes
-
-
-
-
 
   return (
     <div className='flex flex-col h-full text-primary w-full dark:bg-[#2B2D31] bg-[#F2F3F5]'>

@@ -17,8 +17,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal
 import UserInfoModel from "./userinfo-model";
 import axios from "axios";
 import qs from "query-string";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
 
 const roleIconMap = {
   GUEST: null,
@@ -35,7 +33,8 @@ const MembersModel = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [renderKey, setRenderKey] = useState(0);  const [selectedProfile, setSelectedProfile] = useState<MemberWithProfiles | null>(null); // Selected profile data
+  const [renderKey, setRenderKey] = useState(0);  
+  const [selectedProfile, setSelectedProfile] = useState<MemberWithProfiles | null>(null); // Selected profile data
 
   const isModelOpen = isOpen && type === "members";
   const router = useRouter();

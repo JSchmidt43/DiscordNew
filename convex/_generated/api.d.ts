@@ -16,6 +16,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as channels from "../channels.js";
+import type * as friends from "../friends.js";
 import type * as members from "../members.js";
 import type * as messages from "../messages.js";
 import type * as profiles from "../profiles.js";
@@ -33,6 +34,7 @@ import type * as utils_formatDate from "../utils/formatDate.js";
  */
 declare const fullApi: ApiFromModules<{
   channels: typeof channels;
+  friends: typeof friends;
   members: typeof members;
   messages: typeof messages;
   profiles: typeof profiles;

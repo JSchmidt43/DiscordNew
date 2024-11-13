@@ -75,4 +75,24 @@ export default defineSchema({
     serverId: v.string(), // ID of the server
     createdAt: v.number(), // Creation date
   }),
+
+  // New table for tracking friend relationships
+  friends: defineTable({
+    sender: v.string(), // ID of the first user
+    receiver: v.string(), // ID of the second user
+    status: v.string(), //"pending", "accepted", "declined" // Status of the friend request
+    createdAt: v.number(), // Date the request was sent
+    updatedAt: v.number(), // Date the status was last updated
+  }),
+
+  directMessages: defineTable({
+    content: v.string(), // Message content
+    fileUrl: v.optional(v.string()), // Optional file URL
+    sender: v.string(),
+    receiver : v.string(),
+
+    deleted: v.boolean(), // Deletion status
+    createdAt: v.number(), // Creation date
+    updatedAt: v.number(), // Last updated date
+  }),
 });

@@ -2,7 +2,7 @@
 
 import { MemberRole, ServerWithChannelsWithMembers, ServerWithMembersWithProfiles } from "@/types";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
-import { ChevronDown, LogOut, PlusCircle, Settings, Trash, UserPlus, Users } from "lucide-react";
+import { Ban, ChevronDown, LogOut, PlusCircle, Settings, Trash, UserPlus, Users } from "lucide-react";
 import { useModel } from "@/hooks/use-model-store";
 
 interface ServerHeaderProps {
@@ -86,6 +86,14 @@ export const ServerHeader = ({
                     )
                 }
 
+                <DropdownMenuItem
+                    onClick={() => onOpen("report", { server })}
+                    className="text-yellow-500 px-3 py-2 text-sm cursor-pointer"
+                >
+                    Report
+                    <Ban className="h-4 w-4 ml-auto"/>
+                </DropdownMenuItem>
+
                 {isCreator && (
                     <DropdownMenuItem
                         onClick={() => onOpen("deleteServer", { server })}
@@ -95,6 +103,7 @@ export const ServerHeader = ({
                         <Trash className="h-4 w-4 ml-auto" />
                     </DropdownMenuItem>
                 )}
+
                 {!isCreator && (
                     <DropdownMenuItem
                         onClick={() => onOpen("leaveServer", { server })}

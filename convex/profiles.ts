@@ -118,7 +118,7 @@ export const getProfileByUserId = query({
   handler: async (ctx, { userId })  => {
     const profile = await ctx.db.query('profiles')
       .filter(q => q.eq(q.field('userId'), userId))
-      .first(); // Retrieve a single channel
+      .first(); // Retrieve a single profile
     
       
     if(!profile){
@@ -209,7 +209,6 @@ export const updateStatusById = mutation({
   },
 });
 
-
 export const get_profiles_By_Ids = query({
   args: {
     profileIds: v.array(v.string()), // Accepts an array of profile IDs as input
@@ -234,6 +233,27 @@ export const get_profiles_By_Ids = query({
 
   },
 });
+
+export const getProfileByUsername = query({
+  args: {
+    username: v.string(),
+  },
+  handler: async (ctx, { username })  => {
+    const profile = await ctx.db.query('profiles')
+      .filter(q => q.eq(q.field('username'), username))
+      .first(); // Retrieve a single profile
+      
+    if(!profile){
+      return { data: null, error: "Profile not found!!" };
+    }
+
+    return { data: profile, message: "Profile found" };
+
+
+  },
+});
+
+
 /*
 export const deleteAllProfiles = mutation({
   args: {

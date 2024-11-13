@@ -8,7 +8,7 @@ export const DirectMessage = () => {
   const id="PRIVATE MSG ID";
   const onClick = () => {
     console.log("Direct message icon clicked");
-    router.push(`/private/${id}`)
+    router.push(`/directMessages/${id}`)
 }
 
 

@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/components/providers/theme-provider";
 import { cn } from "@/lib/utils";
 import { ConvexClientProvider } from "@/components/providers/convex-provider";
 import { ModelProvider } from "@/components/providers/model-provider";
+import { Toaster } from "react-hot-toast";
 
 const openSans = Open_Sans({ subsets: ["latin"] });
 
@@ -23,21 +24,22 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <body className={cn(openSans.className, "bg-white dark:bg-[#313338]")}>
-          <ConvexClientProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="dark"
-              enableSystem={false}
-              storageKey="discord-theme"
-            >   
-            <ModelProvider/>
-              {children}
-            </ThemeProvider>
-          </ConvexClientProvider>
-          </body>
-      </html>
-    </ClerkProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={cn(openSans.className, "bg-white dark:bg-[#313338]")}>
+        <ConvexClientProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem={false}
+            storageKey="discord-theme"
+          >
+            <ModelProvider />
+            {children}
+          </ThemeProvider>
+        </ConvexClientProvider>
+        <Toaster position="top-center" reverseOrder={false} /> {/* Toaster without children */}
+      </body>
+    </html>
+  </ClerkProvider>
   );
 }

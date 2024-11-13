@@ -38,10 +38,10 @@ export const ChatMessages = ({
         ? systemMessages.filter(message => new Date(message.createdAt) > channelCreationTime)
         : [];
 
-    // Combine regular and filtered system messages
+    // Combine regular messages with system messages only if the channel name is "general"
     const allMessages = [
         ...regularMessages,
-        ...filteredSystemMessages
+        ...(name.toLowerCase() === "general" ? filteredSystemMessages : []) // Include system messages only in "general"
     ];
 
     // Sort all messages by createdAt to ensure they are in chronological order
