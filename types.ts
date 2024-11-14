@@ -61,6 +61,31 @@ export interface Message {
     updatedAt: number; // Last updated date
 }
 
+  // interface for the Direct messages table
+  export interface DirectMessages {
+    _id: string,
+    content: string; // Message content
+    fileUrl?: string; // Optional file URL
+    sender: string;
+    receiver: string;
+    friendshipId: string;
+
+    deleted: boolean; // Deletion status
+    createdAt: number; // Creation date
+    updatedAt: number; // Last updated date
+}
+
+
+// interface for the friends table
+export interface Friends {
+  _id: string,
+  sender: string,
+  receiver: string,
+  status: string,
+  createdAt: number; // Creation date
+  updatedAt: number; // Last updated date
+}
+
 export interface Report {
   id: string;               // Unique identifier for the report
   title: string;            // Title of the report
@@ -119,6 +144,10 @@ export type ServerWithChannelsWithMembers = Server & {
 export type MemberWithProfiles = Member & {
   profile: Profile; // Define that each member has a profile
 };
+
+export type FriendsWithProfiles = Friends & {
+  friendProfile: Profile
+}
 
 // Define role hierarchy
 export const roleHierarchy = {

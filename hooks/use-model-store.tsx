@@ -3,7 +3,8 @@ import { create } from "zustand"
 
 export type ModelType = "createServer" | "invite" | "editServer" 
 | "members" | "createChannel" | "leaveServer" | "deleteServer"
-| "deleteChannel" | "editChannel" | "messageFile" | "deleteMessage" | "joinServer" | "serverChoice" | "report";
+| "deleteChannel" | "editChannel" | "messageFile" | "deleteMessage" | "joinServer"
+ | "serverChoice" | "report" | "deleteDirectMessage" | "directMessageFile";
 
 interface ModelData {
     server?: Server;
@@ -19,6 +20,14 @@ interface ModelData {
     deleteMessage?: {
         memberId: string,
         messageId: string
+    },
+    deleteDirectMessage?: {
+        messageId: string,
+        profileId: string
+    },
+    directMessageFileData?: {
+        sender: string,
+        receiver: string
     }
 }
 

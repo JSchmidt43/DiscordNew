@@ -90,6 +90,7 @@ export default defineSchema({
     fileUrl: v.optional(v.string()), // Optional file URL
     sender: v.string(),
     receiver : v.string(),
+    friendshipId: v.string(),
 
     deleted: v.boolean(), // Deletion status
     createdAt: v.number(), // Creation date

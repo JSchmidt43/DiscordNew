@@ -8,12 +8,25 @@ import { Button } from "./ui/button"
 import { NavigationSideBar } from "./navigation/navigation-sidebar"
 import ServerSidebar from "./servers/server-sidebar"
 import { currentProfile } from "@/lib/current-profile"
+import DirectMessageSidebar from "./directMessages/direct-message-sidebar"
 
 export const MobileToggle = async ({
-    serverId
-}: { serverId: string}) =>  {
+    serverId,
+    directMessageId
+}: { serverId?: string, directMessageId?: string}) =>  {
 
     const profile = await currentProfile();
+
+    // Determine which sidebar to render based on the available ID
+    const renderSidebar = () => {
+        if (serverId) {
+            return <ServerSidebar profileId={profile?._id!} serverId={serverId} isMobileHeader={true} />
+        } else if (directMessageId) {
+            return <DirectMessageSidebar profileId={profile?._id!} isMobileHeader={true} />
+        } else {
+            return <div>No valid ID provided</div> // Fallback UI, can be customized
+        }
+    }
 
     return(
         <Sheet>
@@ -26,7 +39,7 @@ export const MobileToggle = async ({
                 <div className="w-[72px]">
                     <NavigationSideBar profileId={profile?._id!}/>
                 </div>
-                <ServerSidebar profileId={profile?._id!} serverId={serverId} isMobileHeader={true}/>
+                {renderSidebar()}
             </SheetContent>
         </Sheet>
     )

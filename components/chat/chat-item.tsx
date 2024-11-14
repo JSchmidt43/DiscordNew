@@ -14,8 +14,8 @@ import { useModel } from "@/hooks/use-model-store";
 import { MemberWithProfiles } from "@/types";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { ActionTooltip } from "../action-toolkit";
 import UserInfoModel from "../models/userinfo-model";
+import { ActionTooltip } from "../action-toolkit";
 
 interface ChatItemProps {
   id?: string;
@@ -69,7 +69,7 @@ export const ChatItem = ({
   })?.data;
 
   memberRef.current = currentMember;
-  
+
 
   const member = useQuery(api.members.getMemberById, {
     memberId: deletionActor || '', // Same here
@@ -232,7 +232,7 @@ export const ChatItem = ({
           ) : (
             <div>
               {/* Render file or image attachments */}
-              {isImage && !imageFailed && (
+              {fileUrl && !deleted && isImage && !imageFailed && (
                 <a
                   href={fileUrl}
                   target="_blank"
@@ -250,7 +250,7 @@ export const ChatItem = ({
               )}
 
               {/* Render PDF file */}
-              {(imageFailed || isPdf) && (
+              {fileUrl && !deleted && (imageFailed || isPdf) && (
                 <div className="relative flex items-center p-2 mt-2 rounded-md bg-background/10 w-[150px]">
                   <FileIcon className="h-10 w-10 fill-indigo-200 stroke-indigo-400" />
                   <a
@@ -264,15 +264,30 @@ export const ChatItem = ({
                 </div>
               )}
 
+              {/* Show only content if message is deleted */}
+              {deleted && (
+                <p
+                  className="text-sm italic text-zinc-500 dark:text-zinc-400 break-words overflow-hidden w-full mt-1"
+                >
+                  {
+                    // Regular text content for non-file messages
+                    showActor && isCreator
+                      ? content // Full content for creator on hover
+                      : `${content!.split(".")[0]}.` // Truncated content for others
+                  }
+                </p>
+              )}
+
               {/* Regular text content */}
-              {!fileUrl && !isEditing && !action?.trim() && (
+              {!fileUrl && !isEditing && !action?.trim() && !deleted && (
                 <p
                   className={cn(
                     "text-sm text-zinc-600 dark:text-zinc-300 break-words overflow-hidden w-full",
                     deleted && "italic text-zinc-500 dark:text-zinc-400 text-xs mt-1"
                   )}
                 >
-                  {deleted ? content!.split(".")[0] + "." : content}
+                  {content}
+
                   {isUpdated && !deleted && (
                     <span className="text-[10px] mx-2 text-zinc-500 dark:text-zinc-400">(edited)</span>
                   )}
@@ -308,12 +323,39 @@ export const ChatItem = ({
                       Save
                     </Button>
                   </form>
+                  <span className="text-[10px] mt-1 text-zinc-400">Press esacpe to cancel, Enter to save</span>
                 </Form>
               )}
             </div>
           )}
         </div>
       </div>
+      {!isSystemMessage && canDeleteMessage && (
+        <div className="hidden group-hover:flex items-center gap-x-2 absolute p-1
+          -top-2 right-5 bg-white dark:bg-zinc-800 border rounded-sm">
+          {canEditMessage && (
+            <ActionTooltip label="Edit">
+              <Edit
+                onClick={() => setIsEditing(true)}
+                className="cursor-pointer ml-auto w-4 h-4 text-zinc-500
+                    hover:text-zinc-600 dark:hover:text-zinc-300 transition"
+              />
+            </ActionTooltip>
+          )}
+          <ActionTooltip label="Delete">
+            <Trash
+              onClick={() => onOpen("deleteMessage", {
+                deleteMessage: {
+                  memberId: currentMember?._id!,
+                  messageId: id!
+                }
+              })}
+              className="cursor-pointer ml-auto w-4 h-4 text-zinc-500
+                  hover:text-zinc-600 dark:hover:text-zinc-300 transition"
+            />
+          </ActionTooltip>
+        </div>
+      )}
       <UserInfoModel
         isOpen={isUserInfoOpen}
         onClose={() => setUserInfoOpen(false)}
