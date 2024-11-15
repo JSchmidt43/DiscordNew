@@ -23,9 +23,6 @@ const DirectMessageIdPage = async ({
 
   const getReceiverProfile = (await fetchQuery(api.friends.getReceiverFriendProfile, { profileId : profile._id, friendshipId: params.directMessageId }))?.data
 
-
-
-
   return (
     <div className="bg-white dark:bg-[#313338] flex flex-col h-full">
       <ChatHeader

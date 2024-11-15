@@ -96,4 +96,18 @@ export default defineSchema({
     createdAt: v.number(), // Creation date
     updatedAt: v.number(), // Last updated date
   }),
+
+  reports: defineTable({
+    reporterId: v.string(),
+    reportedMemberId: v.string(),
+    reason: v.string(),
+    description: v.string(),
+    status: v.string(),
+    reportedMemberRole: v.string(),
+    serverId: v.string(),
+
+    createdAt: v.number(),
+    updatedAt: v.number()
+  })
+
 });

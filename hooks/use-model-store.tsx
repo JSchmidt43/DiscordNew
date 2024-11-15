@@ -4,7 +4,7 @@ import { create } from "zustand"
 export type ModelType = "createServer" | "invite" | "editServer" 
 | "members" | "createChannel" | "leaveServer" | "deleteServer"
 | "deleteChannel" | "editChannel" | "messageFile" | "deleteMessage" | "joinServer"
- | "serverChoice" | "report" | "deleteDirectMessage" | "directMessageFile";
+ | "serverChoice" | "deleteDirectMessage" | "directMessageFile";
 
 interface ModelData {
     server?: Server;

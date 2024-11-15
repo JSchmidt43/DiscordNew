@@ -4,6 +4,7 @@ import { MemberRole, ServerWithChannelsWithMembers, ServerWithMembersWithProfile
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Ban, ChevronDown, LogOut, PlusCircle, Settings, Trash, UserPlus, Users } from "lucide-react";
 import { useModel } from "@/hooks/use-model-store";
+import { useRouter } from "next/navigation";
 
 interface ServerHeaderProps {
     server: ServerWithChannelsWithMembers;
@@ -17,6 +18,7 @@ export const ServerHeader = ({
     isMobile
 }: ServerHeaderProps) => {
     const { onOpen } = useModel();
+    const router = useRouter();
 
     const isModerator = role === MemberRole.MODERATOR || role === MemberRole.ADMIN || role === MemberRole.CREATOR;
     const isAdmin = role === MemberRole.ADMIN || role === MemberRole.CREATOR;
@@ -87,7 +89,7 @@ export const ServerHeader = ({
                 }
 
                 <DropdownMenuItem
-                    onClick={() => onOpen("report", { server })}
+                    onClick={() => router.push(`/servers/${server._id}/reports`)}
                     className="text-yellow-500 px-3 py-2 text-sm cursor-pointer"
                 >
                     Report
