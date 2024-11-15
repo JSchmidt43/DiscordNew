@@ -4,7 +4,6 @@ import { UserAvatar } from "../user-avatar";
 
 interface ChatHeaderProps {
     serverId?: string;
-    directMessageId?: string;
     name: string;
     type: "channel" | "conversation";
     imageUrl?: string
@@ -13,7 +12,6 @@ interface ChatHeaderProps {
 
 export const ChatHeader = ({
     serverId,
-    directMessageId,
     name,
     type,
     imageUrl
@@ -25,7 +23,7 @@ export const ChatHeader = ({
             {serverId ? (
                 <MobileToggle serverId={serverId} />
             ) : (
-                <MobileToggle directMessageId={directMessageId} />
+                <MobileToggle/>
             )}            {type === "channel" && (
                 <Hash className="w-5 h-5 text-zinc-500 dark:text-zinc-400 mr-2" />
             )}

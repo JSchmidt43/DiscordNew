@@ -53,7 +53,6 @@ export const ChatInput = ({
             await createMessageMutation({
                 content: values.content,
                 memberId,
-                username,
                 channelId,
             });
 

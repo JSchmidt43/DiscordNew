@@ -249,3 +249,41 @@ export const getReceiverFriendProfile = query({
     };
   },
 });
+
+// Function to check if the given profileId is either the sender or receiver of an accepted friend request
+export const getFirstAcceptedFriendByProfileId = query({
+  args: {
+    profileId: v.string(),
+  },
+  handler: async (ctx, { profileId }) => {
+
+    // Fetch the first accepted friend where the user is either the sender or receiver
+    const friend = await ctx.db.query('friends')
+      .filter(f => 
+        // Ensure that profileId is either sender or receiver, and the status is ACCEPTED
+        f.and(
+          f.or(
+            f.eq(f.field('sender'), profileId), // Match if profileId is sender
+            f.eq(f.field('receiver'), profileId), // Or if profileId is receiver
+          ),
+          f.eq(f.field('status'), 'ACCEPTED'), // Status must be "ACCEPTED"
+        )
+      )
+      .first(); // Fetch the first match
+
+    // If no accepted friend is found, return null
+    if (!friend) {
+      return { data: null, message: "No accepted friends found" };
+    }
+
+    // Determine the opposite friend (sender or receiver)
+    const friendId = friend.sender === profileId ? friend.receiver : friend.sender;
+
+    // Return the friend ID (the opposite of the profileId)
+    return { data: friend._id, message: "Accepted friend retrieved successfully" };
+  },
+});
+
+
+
+

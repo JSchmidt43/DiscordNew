@@ -70,10 +70,64 @@ export const updateProfileById = mutation({
   },
 });
 
+export const updateProfileByUserId = mutation({
+  args: { 
+    userId: v.string(), 
+    name: v.optional(v.string()),
+    username: v.optional(v.string()),
+    password: v.optional(v.string()), // Optional password (consider hashing)
+    email: v.optional(v.string()),
+    imageUrl: v.optional(v.string()),
+    status: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    // Retrieve a profile by userId field
+    const profile = await getProfileByUserId(ctx, { userId: args.userId });
+
+    if(!profile.data) {
+      return { data: null, error: "Profile not found!!" };
+    }
+
+    const updates : any = {};
+
+    // Collect the fields that are provided and should be updated
+    if (args.name !== undefined) updates.name = args.name;
+    if (args.username !== undefined) updates.username = args.username;
+    if (args.password !== undefined) updates.password = args.password; // Handle hashing if needed
+    if (args.email !== undefined) updates.email = args.email;
+    if (args.imageUrl !== undefined) updates.imageUrl = args.imageUrl;
+    if (args.status !== undefined) updates.status = args.status;
+
+
+    updates.updatedAt = Date.now();
+    // Update the profile with the new fields
+    await ctx.db.patch(profile.data._id, updates);
+    
+    const updatedProfile = await getProfileById(ctx, { profileId: profile.data._id });
+    return { data: updatedProfile.data, message: "Profile updated successfully" };
+  },
+});
+
 export const deleteProfileById = mutation({
   args: { id: v.string() },
   handler: async (ctx, { id }) => {
     const profile = await getProfileById(ctx, { profileId: id });
+
+    if(!profile.data) {
+      return { data: null, error: "Profile not found!!" };
+    }
+    
+    // Delete the profile
+    await ctx.db.delete(profile.data._id);
+
+    return { data: profile.data._id ,message: 'Profile deleted successfully' };
+  },
+});
+
+export const deleteProfileByUserId = mutation({
+  args: { userId: v.string() },
+  handler: async (ctx, { userId }) => {
+    const profile = await getProfileByUserId(ctx, { userId: userId });
 
     if(!profile.data) {
       return { data: null, error: "Profile not found!!" };
@@ -253,21 +307,3 @@ export const getProfileByUsername = query({
   },
 });
 
-
-/*
-export const deleteAllProfiles = mutation({
-  args: {
-    password: v.string()
-  }, handler: async (ctx, { password }) => {
-    if(password !== 'DryOrc5166#') {
-      throw new Error("ACCESS DENIED!!!");
-    };
-
-    const profiles = await ctx.db.query('profiles').collect();
-
-    for(const profile of profiles){
-      await ctx.db.delete(profile._id);
-    }
-  }
-});
-*/

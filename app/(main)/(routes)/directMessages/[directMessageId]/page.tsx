@@ -30,7 +30,6 @@ const DirectMessageIdPage = async ({
     <div className="bg-white dark:bg-[#313338] flex flex-col h-full">
       <ChatHeader
         name={getReceiverProfile?.username || "Unknown"}
-        serverId='123'
         type='conversation'
         imageUrl={getReceiverProfile?.imageUrl}
       />

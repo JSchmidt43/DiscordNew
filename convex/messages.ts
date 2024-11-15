@@ -10,17 +10,15 @@ export const createMessage = mutation({
       content: v.string(), 
       fileUrl: v.optional(v.string()),
       memberId: v.string(),
-      username: v.string(),
       channelId: v.string(), 
     },
-    handler: async (ctx, { content, fileUrl, memberId, username, channelId }) => {
+    handler: async (ctx, { content, fileUrl, memberId, channelId }) => {
       const createdAt = Date.now();
       const updatedAt = createdAt;
 
       const messageData : any= {
         content,
         memberId,
-        username,
         channelId,
         deleted: false,
         createdAt,

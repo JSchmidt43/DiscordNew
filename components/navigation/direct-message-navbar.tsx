@@ -5,10 +5,8 @@ import { ActionTooltip } from "../action-toolkit";
 
 export const DirectMessage = () => {
   const router = useRouter();
-  const id="PRIVATE MSG ID";
   const onClick = () => {
-    console.log("Direct message icon clicked");
-    router.push(`/directMessages/asd`)
+    router.push(`/directMessages/`)
 }
 
 

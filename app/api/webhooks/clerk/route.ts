@@ -123,8 +123,8 @@ async function handleUserUpdated(user: any) {
     }
 
     await fetchMutation(api.profiles.updateProfileByUserId, {
-        userId: existingProfile.userId,
-        username: user.username || existingProfile.username,
+        userId: existingProfile.data?.userId!,
+        username: user.username || existingProfile.data?.username,
         name: `${user.first_name} ${user.last_name}`,
         email: user.email_addresses[0]?.email_address,
         imageUrl: user.image_url,

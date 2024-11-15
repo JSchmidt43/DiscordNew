@@ -20,7 +20,6 @@ import { ActionTooltip } from "../action-toolkit";
 interface ChatItemProps {
   id?: string;
   content?: string;
-  username?: string | undefined;
   timestamp?: string;
   fileUrl?: string | undefined;
   deleted?: boolean;
@@ -46,7 +45,6 @@ const defaultProfilePic = "/defaultpfp.png";
 export const ChatItem = ({
   id,
   content,
-  username,
   timestamp,
   deletionActor,
   fileUrl,
@@ -69,6 +67,8 @@ export const ChatItem = ({
   })?.data;
 
   memberRef.current = currentMember;
+
+  const username = useQuery(api.profiles.getProfileByMemberId, { memberId: deletionActor!})?.data?.username;
 
 
   const member = useQuery(api.members.getMemberById, {
@@ -143,7 +143,7 @@ export const ChatItem = ({
   };
 
   // Check if this message is a system message
-  const isSystemMessage = !username && action?.trim() !== ""; // Check if there's no username and action is not empty
+  const isSystemMessage = action && action.trim() !== ""; // Check if the action is non-empty or matches specific actions for system messages
 
   return (
     <div

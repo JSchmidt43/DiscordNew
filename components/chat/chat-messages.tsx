@@ -6,6 +6,7 @@ import { formatDate } from "@/convex/utils/formatDate";
 import { MemberWithProfiles } from "@/types";
 import { ChatItem } from "./chat-item";
 import { ChatWelcome } from "./chat-welcome";
+import { fetchQuery } from "convex/nextjs";
 
 interface ChatMessageProps {
     name: string,
@@ -76,6 +77,7 @@ export const ChatMessages = ({
         }
     }, [getMessages?.data, filteredSystemMessages]);
 
+   
     return (
         <div ref={chatRef} className="flex-1 bg-grey-500 flex flex-col py-4 overflow-y-auto">
             <div className="flex flex-col mt-auto">
@@ -94,14 +96,13 @@ export const ChatMessages = ({
                                 key={message._id}
                                 id={message._id}
                                 content={message.content}
-                                username={message.username}
                                 timestamp={formatDate(message.createdAt)}
                                 fileUrl={message.fileUrl}
                                 deleted={message.deleted}
                                 deletionActor={message.memberId}
                                 currentMember={member}
                                 isUpdated={message.updatedAt !== message.createdAt}
-                                action={message.action}
+                                action={message?.action}
                             />
                         ))}
                     </div>

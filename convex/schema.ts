@@ -60,7 +60,7 @@ export default defineSchema({
     content: v.string(), // Message content
     fileUrl: v.optional(v.string()), // Optional file URL
     memberId: v.string(), // ID of the member sending the message
-    username: v.string(), // Username of the sender
+
     channelId: v.string(), // ID of the channel
     deleted: v.boolean(), // Deletion status
     createdAt: v.number(), // Creation date
