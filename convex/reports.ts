@@ -1,33 +1,36 @@
 import { Id } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 import { v } from 'convex/values';
+import { getProfileByMemberId } from "./profiles";
 import { getMemberById } from "./members";
-import { getServerByChannelId } from "./servers";
-import { getProfileById, getProfileByMemberId } from "./profiles";
-import { getFriendshipStatus } from "./friends";
+
 
 export const createReport = mutation({
     args: {
         reporterId: v.string(),
         reportedMemberId: v.string(),
-        reason: v.string(),
+        title: v.string(),
         description: v.string(),
-        status: v.string(),
-        reportedMemberRole: v.string(),
+        tags: v.array(v.string()),
         serverId: v.string()
     },
-    handler: async (ctx, { reporterId, reportedMemberId, reportedMemberRole, reason, description, status, serverId }) => {
+    handler: async (ctx, { reporterId, tags, reportedMemberId, title, description, serverId }) => {
         const createdAt = Date.now();
         const updatedAt = createdAt;
 
+        const profile = (await getProfileByMemberId(ctx, { memberId: reporterId }))?.data;
+
+        const reportedMember = (await getMemberById(ctx, { memberId: reportedMemberId }))?.data
 
         const reportData: any = {
             reporterId,
+            reporterUsername : profile?.username,
             reportedMemberId,
-            reportedMemberRole,
-            reason,
+            tags,
+            reportedMemberRole : reportedMember?.role,
+            title,
             description,
-            status,
+            status : "unsolved",
             serverId,
 
             createdAt,
@@ -59,7 +62,7 @@ export const updateReportById = mutation({
     args: {
         reportId: v.string(),
         status: v.string(),
-        reason: v.string(),
+        title: v.string(),
         description: v.string()
     },
     handler: async (ctx, args) => {
@@ -74,7 +77,7 @@ export const updateReportById = mutation({
 
         // Collect the fields that are provided and should be updated
         if (args.status !== undefined) updates.status = args.status;
-        if (args.reason !== undefined) updates.reason = args.reason;
+        if (args.title !== undefined) updates.title = args.title;
         if (args.description !== undefined) updates.description = args.description;
 
         updates.updatedAt = Date.now();
@@ -124,3 +127,4 @@ export const getReportsByStautsAndServerId = query({
         return { data: reports, message: "Reports found" };
     },
 });                 
+

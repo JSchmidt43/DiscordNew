@@ -99,12 +99,15 @@ export default defineSchema({
 
   reports: defineTable({
     reporterId: v.string(),
+    reporterUsername: v.string(),
     reportedMemberId: v.string(),
-    reason: v.string(),
+    title: v.string(),
     description: v.string(),
     status: v.string(),
+    tags: v.array(v.string()),
     reportedMemberRole: v.string(),
     serverId: v.string(),
+
 
     createdAt: v.number(),
     updatedAt: v.number()

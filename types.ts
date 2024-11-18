@@ -88,13 +88,19 @@ export interface Friends {
 
 export interface Report {
   id: string;               // Unique identifier for the report
-  title: string;            // Title of the report
-  description: string;      // Detailed description of the report
-  status: "unsolved" | "solved"; // Status of the report (either unsolved or solved)
-  date: string;             // Date when the report was created
-  createdBy: string;        // ID of the user who created the report
-  serverId: string;         // ID of the server the report belongs to
-  actionsTaken?: string[];  // An optional list of actions that have been taken on this report (e.g., "reported to moderator", "investigated", etc.)
+  reporterId:string,
+  reporterUsername: string,
+  reportedMemberId: string,
+  title:string,
+  description: string,
+  status: "unsolved" | "pending" | "solved",
+  tags: string[],
+  reportedMemberRole: string,
+  serverId: string,
+
+
+  createdAt: number,
+  updatedAt: number
 }
 
 export interface FriendRequestWithProfile {
