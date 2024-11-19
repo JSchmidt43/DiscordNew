@@ -19,12 +19,10 @@ const DeleteReportModel = () => {
     const router = useRouter();
     const isModelOpen = isOpen && type === "deleteReport";
     const [isLoading, setIsLoading] = useState(false);
-    const { reportId } = data;
 
-    // const report = useQuery(
-    //     reportId ? api.reports.getReportById : null, 
-    //     { reportId }
-    // )?.data;
+    const reportId = data?.report?.reportId;
+    const title = data?.report?.title;
+
     const deleteReport = useMutation(api.reports.deleteReportById);
 
 
@@ -50,14 +48,14 @@ const DeleteReportModel = () => {
 
     return (
         <Dialog open={isModelOpen} onOpenChange={handleClose}>
-            <DialogContent className="bg-white dark:bg-[#1e1f22] text-black dark:text-white p-0 overflow-hidden">
+            <DialogContent className="bg-gray-50 dark:bg-[#292a3e] text-black dark:text-white p-0 overflow-hidden">
                 <DialogHeader className="pt-8 px-6">
                     <DialogTitle className="text-2xl text-center font-bold">
                         Delete Report
                     </DialogTitle>
                     <DialogDescription className="text-center text-zinc-500">
                         Are you sure you want to do this? <br />
-                        <span className="font-semibold text-indigo-500">#{reportId} </span>
+                        <span className="font-semibold text-indigo-500">#{title} </span>
                         will be permanently deleted!!!
                     </DialogDescription>
                 </DialogHeader>

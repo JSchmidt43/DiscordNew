@@ -175,4 +175,3 @@ export const getAllMembersByServerId = query({
     return { data: members, message: "Success" };
   },
 })
-

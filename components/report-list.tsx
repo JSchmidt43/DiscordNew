@@ -37,6 +37,10 @@ const ReportsList: React.FC<ReportsListProps> = ({ serverId, memberId }) => {
         setShowMyReportsModal(true); // Show the modal for "My Reports"
     };
 
+    const membersWithProfiles = useQuery(api.servers.getServerWithMembersAndChannelsByServerId, { serverId })?.data?.members
+
+    const members = membersWithProfiles?.filter(member => member._id !== memberId)
+
     const deleteReport = useMutation(api.reports.deleteReportById);
 
     const handleCreateReport = (title: string, description: string) => {
@@ -80,11 +84,11 @@ const ReportsList: React.FC<ReportsListProps> = ({ serverId, memberId }) => {
                     </button>
                     <button
                         onClick={() => {
-                            onOpen("reports", {
-                                reports: {
-                                    serverId,
-                                    reporterId: memberId
-
+                            onOpen("createReport", {
+                                createReport: {
+                                    serverId: serverId,
+                                    reporterId: memberId,
+                                    membersWithProfiles: members
                                 }
                             })
                         }}
