@@ -21,6 +21,7 @@ export const createReport = mutation({
         const profile = (await getProfileByMemberId(ctx, { memberId: reporterId }))?.data;
 
         const reportedMember = (await getMemberById(ctx, { memberId: reportedMemberId }))?.data
+        console.log(reportedMember)
 
         const reportData: any = {
             reporterId,
@@ -85,7 +86,34 @@ export const updateReportById = mutation({
         await ctx.db.patch(report.data!._id, updates);
 
         const updatedReport = await getReportById(ctx, { reportId: report.data!._id });
-        return { data: updatedReport.data, message: "Message updated successfully" };
+        return { data: updatedReport.data, message: "Report updated successfully" };
+    },
+});
+
+export const solveReport = mutation({
+    args: {
+        reportId: v.string(),
+        status: v.string(),
+    },
+    handler: async (ctx, args) => {
+        // Retrieve the report by Id
+        const report = await getReportById(ctx, { reportId: args.reportId });
+
+        if (!report.data) {
+            return { data: null, error: 'Report not found' };
+        }
+
+        const updates: any = {};
+
+        // Collect the fields that are provided and should be updated
+        if (args.status !== undefined) updates.status = args.status;
+
+        updates.updatedAt = Date.now();
+        // Update the profile with the new fields
+        await ctx.db.patch(report.data!._id, updates);
+
+        const updatedReport = await getReportById(ctx, { reportId: report.data!._id });
+        return { data: updatedReport.data, message: "Report solved successfully" };
     },
 });
 

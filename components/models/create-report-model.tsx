@@ -12,12 +12,12 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
-import { MemberRole } from "@/types";
+import { Member, MemberRole } from "@/types";
 import { Crown, ShieldAlert, ShieldCheck } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 
 const formSchema = z.object({
-  offenderId: z.string().min(1, "Offender's Id is required."),
+  offenderId: z.string().min(1, "Offender is required."),
   title: z.string().min(1, "Title is required."),
   description: z.string().min(1, "Description is required."),
   tags: z
@@ -61,7 +61,16 @@ const CreateReportModel = () => {
     try {
       const payload = { ...values, tags };
 
-      console.log(payload);
+      await createReportMutation({
+        reporterId: createReport?.reporterId,
+        reportedMemberId: payload.offenderId,
+        title: payload.title,
+        description: payload.description,
+        tags: payload.tags,
+        serverId: createReport?.serverId
+      })
+
+      handleClose();
       router.refresh();
       // handleClose();
     } catch (error: any) {
@@ -95,9 +104,9 @@ const CreateReportModel = () => {
     onClose();
   };
 
-  const handleSelectOffender = (member: any) => {
+  const handleSelectOffender = (member: Member) => {
     setSelectedOffender(member); // Set selected offender
-    form.setValue("offenderId", member.profile._id); // Set offender ID in the form
+    form.setValue("offenderId", member._id); // Set offender ID in the form
   };
 
   return (
@@ -186,7 +195,7 @@ const CreateReportModel = () => {
                         <DropdownMenuContent className="w-[415px] max-h-60 overflow-y-auto">
                           {createReport?.membersWithProfiles?.map((member) => (
                             <DropdownMenuItem
-                              key={member.profile._id}
+                              key={member._id}
                               onClick={() => handleSelectOffender(member)} // Select member
                               className="flex items-center space-x-4 py-2"
                             >

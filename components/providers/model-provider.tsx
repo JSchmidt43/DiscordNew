@@ -18,6 +18,7 @@ import DeleteDirectMessageModel from "../models/delete-directMessage-model"
 import DirectMessageFileModel from "../models/direct-message-file-model"
 import CreateReportModel from "../models/create-report-model"
 import DeleteReportModel from "../models/delete-report-model"
+import ReportModel from "../models/report-model"
 
 
 export const ModelProvider = () => {
@@ -48,6 +49,7 @@ export const ModelProvider = () => {
             <DirectMessageFileModel/>
             <CreateReportModel/>
             <DeleteReportModel/>
+            <ReportModel/>
             {/* 
              */}
         </>

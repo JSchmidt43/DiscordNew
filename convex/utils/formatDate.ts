@@ -14,3 +14,18 @@ export function formatDate(timestamp: number): string {
     return `${month}/${day}/${year} ${hours}:${minutes}`;
   }
   
+  // utils/dateUtils.ts
+export const isToday = (date: Date) => {
+  const today = new Date();
+  return (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+  );
+};
+
+export const isThisWeek = (date: Date) => {
+  const now = new Date();
+  const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
+  return date >= startOfWeek;
+};

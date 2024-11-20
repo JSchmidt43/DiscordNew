@@ -4,15 +4,16 @@ import { create } from "zustand"
 export type ModelType = "createServer" | "invite" | "editServer" 
 | "members" | "createChannel" | "leaveServer" | "deleteServer"
 | "deleteChannel" | "editChannel" | "messageFile" | "deleteMessage" | "joinServer"
- | "serverChoice" | "deleteDirectMessage" | "directMessageFile" | "createReport" | "deleteReport";
+ | "serverChoice" | "deleteDirectMessage" | "directMessageFile" | "createReport" | "deleteReport" | "report";
 
 interface ModelData {
     server?: Server;
     channel?:Channel;
-    report?: {
-        reportId: string,
-        title: string
-    },
+    reportData?: {
+        report: any,
+        currentUser: Member,
+        members: MemberWithProfiles[]
+    };
     channelType?: ChannelType,
     fileData?: {
         username: string,
@@ -20,6 +21,10 @@ interface ModelData {
         serverId: string | undefined,
         memberId: string
     },
+    deleteReport?: {
+        reportId: string,
+        title: string
+    };
     profile?: Profile,
     deleteMessage?: {
         memberId: string,

@@ -20,8 +20,8 @@ const DeleteReportModel = () => {
     const isModelOpen = isOpen && type === "deleteReport";
     const [isLoading, setIsLoading] = useState(false);
 
-    const reportId = data?.report?.reportId;
-    const title = data?.report?.title;
+    const reportId = data?.deleteReport?.reportId;
+    const title = data?.deleteReport?.title;
 
     const deleteReport = useMutation(api.reports.deleteReportById);
 
