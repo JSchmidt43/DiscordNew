@@ -103,7 +103,7 @@ export const ChatInput = ({
                                         <Plus className="text-white dark:text-[#313338]" />
                                     </button>
                                     <Input
-                                        ref={inputRef} // Attach the ref to the Input component
+                                        // ref={inputRef} // Attach the ref to the Input component
                                         disabled={isLoading}
                                         className="px-14 py-6 bg-zinc-200/90 dark:bg-zinc-700/75 border-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-600 dark:text-zinc-200"
                                         placeholder={`Message ${type === "conversation" ? name : "#" + name}`}
@@ -112,7 +112,7 @@ export const ChatInput = ({
                                     <div className="absolute top-7 right-8">
                                         <EmojiPicker
                                             onChange={(emoji: string) => field.onChange(`${field.value}${emoji}`)}
-                                            tabIndex={-1} // Remove from tab order
+                                            // tabIndex={-1} // Remove from tab order
                                         />
                                     </div>
                                 </div>

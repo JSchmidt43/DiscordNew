@@ -5,9 +5,6 @@ import FileUpload from "../file-upload";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod"
-import axios from "axios";
-import qs from "query-string"
-
 import {
 Dialog,
 DialogContent,

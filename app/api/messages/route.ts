@@ -1,7 +1,6 @@
 import { api } from "@/convex/_generated/api";
 import { currentProfile } from "@/lib/current-profile";
 import { fetchMutation, fetchQuery } from "convex/nextjs";
-import { NextApiRequest } from "next";
 import { NextResponse } from "next/server";
 
 export async function POST(
@@ -60,7 +59,6 @@ export async function POST(
         const message = await fetchMutation(api.messages.createMessage, {
             content,
             memberId: member.data._id,
-            username: profile.username,
             channelId: channelId as string,
             fileUrl
         })

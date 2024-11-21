@@ -26,12 +26,13 @@ const iconMap = {
   [ChannelType.VIDEO]: <Video className="mr-2 h-4 w-4" />
 };
 
-const roleIconMap = {
+const roleIconMap: Record<MemberRole, JSX.Element | null> = {
   [MemberRole.GUEST]: null,
-  [MemberRole.MODERATOR]: <ShieldCheck className="w-4 h-4 mr-2 text-indigo-500" />,
-  [MemberRole.ADMIN]: <ShieldAlert className="w-4 h-4 mr-2 text-rose-500" />,
-  [MemberRole.CREATOR]: <Crown className="w-4 h-4 mr-2 text-yellow-500" />
-}
+  [MemberRole.MODERATOR]: <ShieldCheck className="h-4 w-4 ml-2 text-indigo-500" />,
+  [MemberRole.ADMIN]: <ShieldAlert className="h-4 w-4 text-rose-500" />,
+  [MemberRole.CREATOR]: <Crown className="h-4 w-4 text-yellow-500" />,
+};
+
 
 const ServerSidebar = ({
   serverId,
@@ -39,9 +40,11 @@ const ServerSidebar = ({
   isMobileHeader = false
 }: ServerSidebarProps) => {
 
-  const server = useQuery(api.servers.getServerWithMembersAndChannelsByServerId, {
+  const server  = useQuery(api.servers.getServerWithMembersAndChannelsByServerId, {
     serverId
   })?.data;
+
+  console.log(server)
 
   const textChannels = server?.channels.filter(
     (channel: Channel) => channel.type === ChannelType.TEXT
@@ -55,11 +58,11 @@ const ServerSidebar = ({
 
 
   // Extract profileIds from members
-  const role = server?.members.find((member: Member) => member.profileId === profileId)
+  const role = server?.members.find((member) => member.profileId === profileId)
     ?.role;
 
   // Extract profile IDs if server members exist
-  const profileIds: string[] = server?.members?.map((member: Member) => member.profileId) || [];
+  const profileIds: string[] = server?.members?.map((member) => member.profileId) || [];
 
 
   // Always call useQuery, but provide an empty array as a fallback if profileIds is empty
@@ -105,7 +108,7 @@ const ServerSidebar = ({
 
   return (
     <div className='flex flex-col h-full text-primary w-full dark:bg-[#2B2D31] bg-[#F2F3F5]'>
-      <ServerHeader server={server} role={role} isMobile={isMobileHeader} />
+      {server && (<ServerHeader server={server} role={role} isMobile={isMobileHeader} />)}
       <ScrollArea className='flex-1 px-3'>
         <div className='mt-2'>
           <ServerSearch
@@ -116,7 +119,7 @@ const ServerSidebar = ({
                 data: textChannels?.map((channel) => ({
                   id: channel._id,
                   name: channel.name,
-                  icon: iconMap[channel.type],
+                  icon: iconMap[channel.type as ChannelType],
                 })),
               },
               {
@@ -125,7 +128,7 @@ const ServerSidebar = ({
                 data: audioChannels?.map((channel) => ({
                   id: channel._id,
                   name: channel.name,
-                  icon: iconMap[channel.type],
+                  icon: iconMap[channel.type as ChannelType],
                 })),
               },
               {
@@ -134,7 +137,7 @@ const ServerSidebar = ({
                 data: videoChannels?.map((channel) => ({
                   id: channel._id,
                   name: channel.name,
-                  icon: iconMap[channel.type],
+                  icon: iconMap[channel.type as ChannelType],
                 })),
               },
               {
@@ -143,14 +146,14 @@ const ServerSidebar = ({
                 data: membersWithStatus?.map((member) => ({
                   id: member._id,
                   name: member.profile?.username || "User",
-                  icon: roleIconMap[member.role],
+                  icon: roleIconMap[member.role as MemberRole],
                 })),
               },
             ]}
           />
         </div>
         <Separator className="bg-zinc-200 dark:bg-zinc-700 rounded-md my-2" />
-        {!!textChannels?.length && (
+        {server && !!textChannels?.length && (
           <div className="mb-2">
             <ServerSection
               sectionType="channels"
@@ -163,14 +166,14 @@ const ServerSidebar = ({
                 <ServerChannel
                   key={channel._id}
                   channel={channel}
-                  role={role}
+                  role={role as MemberRole}
                   server={server}
                 />
               ))}
             </div>
           </div>
         )}
-        {!!audioChannels?.length && (
+        {server && !!audioChannels?.length && (
           <div className="mb-2">
             <ServerSection
               sectionType="channels"
@@ -183,14 +186,14 @@ const ServerSidebar = ({
                 <ServerChannel
                   key={channel._id}
                   channel={channel}
-                  role={role}
+                  role={role as MemberRole}
                   server={server}
                 />
               ))}
             </div>
           </div>
         )}
-        {!!videoChannels?.length && (
+        {server && !!videoChannels?.length && (
           <div className="mb-2">
             <ServerSection
               sectionType="channels"
@@ -203,7 +206,7 @@ const ServerSidebar = ({
                 <ServerChannel
                   key={channel._id}
                   channel={channel}
-                  role={role}
+                  role={role as MemberRole}
                   server={server}
                 />
               ))}

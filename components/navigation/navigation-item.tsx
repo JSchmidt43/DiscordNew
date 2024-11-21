@@ -4,7 +4,6 @@ import Image from "next/image"
 import { useParams, useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { ActionTooltip } from "../action-toolkit"
-import { ImageError } from "next/dist/server/image-optimizer"
 
 
 interface NavigationItemProps {

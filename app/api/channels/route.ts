@@ -1,8 +1,7 @@
 import { api } from "@/convex/_generated/api";
 import { currentProfile } from "@/lib/current-profile"
-import { MemberRole } from "@/types";
 import { fetchMutation, fetchQuery } from "convex/nextjs";
-import { NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server"
 
 export async function POST(
     req: Request

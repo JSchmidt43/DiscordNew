@@ -1,6 +1,6 @@
 "use client"
 
-import { ChannelType, MemberRole, ServerWithMembersWithProfiles } from "@/types";
+import { ChannelType, MemberRole, ServerWithChannelsWithMembers } from "@/types";
 import { ActionTooltip } from "../action-toolkit";
 import { Plus, Settings } from "lucide-react";
 import { useModel } from "@/hooks/use-model-store";
@@ -10,7 +10,7 @@ interface ServerSectionProps {
     role?: MemberRole | string;
     sectionType: "channels" | "members";
     channelType?: ChannelType;
-    server?: ServerWithMembersWithProfiles;
+    server?: ServerWithChannelsWithMembers;
 }
 
 export const ServerSection = ({

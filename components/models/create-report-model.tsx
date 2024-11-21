@@ -26,7 +26,7 @@ const formSchema = z.object({
     .transform((tags) => tags?.filter(Boolean) || []),
 });
 
-const roleIconMap = {
+const roleIconMap: Record<string, JSX.Element | null> = {
   [MemberRole.GUEST]: null,
   [MemberRole.MODERATOR]: <ShieldCheck className="w-4 h-4 mr-2 text-indigo-500" />,
   [MemberRole.ADMIN]: <ShieldAlert className="w-4 h-4 mr-2 text-rose-500" />,
@@ -38,7 +38,7 @@ const CreateReportModel = () => {
   const router = useRouter();
 
   const isModelOpen = isOpen && type === "createReport";
-  const { createReport } = data;
+  const createReport = data?.createReport;
 
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
@@ -62,12 +62,12 @@ const CreateReportModel = () => {
       const payload = { ...values, tags };
 
       await createReportMutation({
-        reporterId: createReport?.reporterId,
+        reporterId: createReport?.reporterId || "",
         reportedMemberId: payload.offenderId,
         title: payload.title,
         description: payload.description,
         tags: payload.tags,
-        serverId: createReport?.serverId
+        serverId: createReport?.serverId || ""
       })
 
       handleClose();
@@ -200,12 +200,12 @@ const CreateReportModel = () => {
                               className="flex items-center space-x-4 py-2"
                             >
                               <img
-                                src={member.profile.imageUrl || "/default-avatar.jpg"}
-                                alt={member.profile.username}
+                                src={member?.profile?.imageUrl || "/default-avatar.jpg"}
+                                alt={member?.profile?.username}
                                 className="w-8 h-8 rounded-full"
                               />
                               <span className="flex items-center">
-                                {member.profile.username}
+                                {member?.profile?.username}
                                 <span className="ml-2">{roleIconMap[member.role]}</span>
                               </span>
                             </DropdownMenuItem>

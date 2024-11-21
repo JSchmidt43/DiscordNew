@@ -1,4 +1,4 @@
-import { Server, Channel, Profile, Message, Member, ServerWithChannelsWithMembers, ServerWithMembersWithProfiles, ChannelType, Report, MemberWithProfiles } from "@/types";
+import { Server, Channel, Profile, Message, Member, ServerWithChannelsWithMembers, ChannelType, Report, MemberWithProfiles } from "@/types";
 import { create } from "zustand"
 
 export type ModelType = "createServer" | "invite" | "editServer" 
@@ -7,11 +7,11 @@ export type ModelType = "createServer" | "invite" | "editServer"
  | "serverChoice" | "deleteDirectMessage" | "directMessageFile" | "createReport" | "deleteReport" | "report";
 
 interface ModelData {
-    server?: Server;
+    server?: ServerWithChannelsWithMembers;
     channel?:Channel;
     reportData?: {
         report: any,
-        currentUser: Member,
+        currentUser: MemberWithProfiles | undefined,
         members: MemberWithProfiles[]
     };
     channelType?: ChannelType,

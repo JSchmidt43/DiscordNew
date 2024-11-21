@@ -280,7 +280,7 @@ const FriendRequest = ({ request }: { request: FriendRequestWithProfile }) => {
                 <Button variant="primary" onClick={() => handleAccept(request._id, senderProfile)} className="bg-green-500 hover:bg-green-600">
                     Accept
                 </Button>
-                <Button variant="secondary" onClick={() => handleDecline(request._id, senderProfile)} className="bg-red-500 hover:bg-red-600">
+                <Button variant="secondary" onClick={() => handleDecline(request._id)} className="bg-red-500 hover:bg-red-600">
                     Decline
                 </Button>
             </div>

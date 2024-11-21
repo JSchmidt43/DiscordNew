@@ -2,7 +2,6 @@ import { api } from "@/convex/_generated/api";
 import { currentProfile } from "@/lib/current-profile";
 import { fetchMutation } from "convex/nextjs";
 import { NextResponse } from "next/server";
-import { v4 as uuidv4} from "uuid"
 
 export async function PATCH(
     req: Request,

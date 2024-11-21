@@ -13,7 +13,7 @@ import { Button } from "../ui/button";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useOrigin } from "@/hooks/use-origin";
-import { Member, Profile } from "@/types";
+import { Member, MemberWithProfiles, Profile } from "@/types";
 
 const InviteModel = () => {
   const { onOpen, isOpen, onClose, type, data } = useModel();
@@ -26,7 +26,7 @@ const InviteModel = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [renderKey, setRenderKey] = useState(0);
-  const memberRef = useRef(null);
+  const memberRef = useRef<MemberWithProfiles | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -57,8 +57,9 @@ const InviteModel = () => {
   useEffect(() => {
     if (server?.members && profile) {
       const foundMember = server.members.find(
-        (mbm: Member) => mbm.profileId === profile._id
+        (mbm: MemberWithProfiles) => mbm.profileId === profile._id
       );
+      
       if (foundMember) {
         memberRef.current = foundMember;
         setRenderKey((prevKey) => prevKey + 1); // Force re-render

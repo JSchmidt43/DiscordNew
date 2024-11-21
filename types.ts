@@ -110,14 +110,7 @@ export interface FriendRequestWithProfile {
   sender: string;
   receiver: string;
   status: string;
-  senderProfile: {
-      _id: string;
-      username: string;
-      name: string;
-      email: string;
-      imageUrl: string;
-      // Include any other profile fields you need
-  } | null;
+  // senderProfile: Profile
 }
 
   
@@ -135,30 +128,51 @@ export enum MemberRole {
 }
 
 
-  
-export type ServerWithMembersWithProfiles = Server & {
-    members: (Member & { profile: Profile })[];
-};
-
-
-export type ServerWithChannelsWithMembers = Server & {
-  members: (Member & { profile : Profile})[],
+export type ServerWithChannelsWithMembers = {
+  _id: string,
+  name: string; // Server name
+  imageUrl: string; // URL for the server image
+  inviteCode: string; // Unique invite code for the server
+  creatorId: string; // ID of the creator profile
+  members: MemberWithProfiles[]
   channels: Channel[]
-};
+  createdAt: number; // Creation date
+  updatedAt: number; // Last updated date
+}
 
 
-export type MemberWithProfiles = Member & {
-  profile: Profile; // Define that each member has a profile
-};
+export type MemberWithProfiles = {
+  _id: string,
+  role: string; // Member role (CREATOR, ADMIN, etc.)
+  profileId: string; // ID of the associated profile
+  serverId: string; // ID of the associated server
+  messages: string[]; // Array of message IDs
+  createdAt: number; // Creation date
+  updatedAt: number; // Last updated date
+  profile: {
+    _id: string,
+    name: string; // Profile name
+    username: string; // Username, must be unique
+    password?: string; // Optional password (consider hashing)
+    email: string; // User email
+    imageUrl: string; // URL for the profile image
+    status: string; // User status
+    userId: string; // ID of the associated user
+    createdAt: number; // Creation date
+    updatedAt: number; // Last updated date
+  } | null
+}
 
 export type FriendsWithProfiles = Friends & {
   friendProfile: Profile
 }
 
 // Define role hierarchy
-export const roleHierarchy = {
-  CREATOR: 4,
-  ADMIN: 3,
-  MODERATOR: 2,
-  GUEST: 1
+export const roleHierarchy: Record<string, number> = {
+  [MemberRole.CREATOR]: 4,
+  [MemberRole.ADMIN]: 3,
+  [MemberRole.MODERATOR]: 2,
+  [MemberRole.GUEST]: 1
 };
+
+

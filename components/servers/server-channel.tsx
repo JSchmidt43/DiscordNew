@@ -5,11 +5,11 @@ import { Edit, Hash, Lock, Mic, Trash, Video } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { ActionTooltip } from "../action-toolkit";
 import { useModel, ModelType } from "@/hooks/use-model-store";
-import { Channel, ChannelType, MemberRole, Server } from "@/types";
+import { Channel, ChannelType, MemberRole, Server, ServerWithChannelsWithMembers } from "@/types";
 
 interface ServerChannelProps {
     channel : Channel;
-    server: Server;
+    server: ServerWithChannelsWithMembers;
     role?: MemberRole
 }
 
@@ -28,7 +28,7 @@ export const ServerChannel = ({
     const params = useParams();
     const router = useRouter();
 
-    const Icon = iconMap[channel.type];
+    const Icon = iconMap[channel.type as ChannelType];
 
     const onClick = () => {
         router.push(`/servers/${params?.serverId}/channels/${channel._id}`)

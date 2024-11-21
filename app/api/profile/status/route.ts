@@ -1,5 +1,5 @@
-import { NextResponse, NextRequest } from 'next/server';
-import { fetchMutation, fetchQuery } from 'convex/nextjs';
+import { NextResponse } from 'next/server';
+import { fetchMutation } from 'convex/nextjs';
 import { api } from '@/convex/_generated/api';
 import { currentProfile } from '@/lib/current-profile';
 

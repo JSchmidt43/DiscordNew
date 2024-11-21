@@ -6,7 +6,6 @@ import { formatDate } from "@/convex/utils/formatDate";
 import { MemberWithProfiles } from "@/types";
 import { ChatItem } from "./chat-item";
 import { ChatWelcome } from "./chat-welcome";
-import { fetchQuery } from "convex/nextjs";
 
 interface ChatMessageProps {
     name: string,

@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Member, MemberRole, MemberWithProfiles, Profile, roleHierarchy, ServerWithChannelsWithMembers, ServerWithMembersWithProfiles } from "@/types";
+import { Member, MemberRole, MemberWithProfiles, Profile, roleHierarchy, ServerWithChannelsWithMembers } from "@/types";
 import { ScrollArea } from "../ui/scroll-area";
 import { UserAvatar } from "../user-avatar";
 import { Check, Crown, Loader2, MoreVertical, Shield, ShieldAlert, ShieldCheck, ShieldQuestion, UserMinusIcon } from "lucide-react";
@@ -18,12 +18,14 @@ import UserInfoModel from "./userinfo-model";
 import axios from "axios";
 import qs from "query-string";
 
-const roleIconMap = {
-  GUEST: null,
-  MODERATOR: <ShieldCheck className="h-4 w-4 ml-2 text-indigo-500" />,
-  ADMIN: <ShieldAlert className="h-4 w-4 text-rose-500" />,
-  CREATOR: <Crown className="h-4 w-4 text-yellow-500" />
+// Define roleIconMap with proper typing
+const roleIconMap: Record<MemberRole, JSX.Element | null> = {
+  [MemberRole.GUEST]: null,
+  [MemberRole.MODERATOR]: <ShieldCheck className="h-4 w-4 ml-2 text-indigo-500" />,
+  [MemberRole.ADMIN]: <ShieldAlert className="h-4 w-4 text-rose-500" />,
+  [MemberRole.CREATOR]: <Crown className="h-4 w-4 text-yellow-500" />,
 };
+
 
 
 const MembersModel = () => {
@@ -41,7 +43,7 @@ const MembersModel = () => {
 
   const { server } = data as { server: ServerWithChannelsWithMembers };
 
-  const memberRef = useRef(null);
+  const memberRef = useRef<MemberWithProfiles | null>(null);
 
   // Fetch the user's profile data
   useEffect(() => {
@@ -80,7 +82,7 @@ const MembersModel = () => {
   }, [data, profile]);
 
   // Function to check if the current user has a higher role than the member
-  const hasHigherRole = (currentRole: MemberRole, memberRole: MemberRole) => {
+  const hasHigherRole = (currentRole: string, memberRole: string) => {
     return roleHierarchy[currentRole] > roleHierarchy[memberRole];
   };
 
@@ -177,11 +179,11 @@ const MembersModel = () => {
                 <div className="flex flex-col gap-y-1">
                   <div className="text-sm font-semibold flex items-center gap-x-1">
                       {member?.profile?.username}
-                      {roleIconMap[member.role]}
+                      {roleIconMap[member.role as MemberRole]}
                   </div>
                   <p className="text-xs text-zinc-500">{member?.profile?.email}</p>
                 </div>
-                {server?.creatorId !== member.profileId && loadingId !== member._id &&
+                {server?.creatorId !== member.profileId && loadingId !== member._id && memberRef.current?.role && member.role &&
                   hasHigherRole(memberRef.current?.role, member.role) && (
                     <div className="ml-auto">
                       <DropdownMenu>
@@ -189,7 +191,7 @@ const MembersModel = () => {
                           <MoreVertical className="h-4 w-4 text-zinc-500" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent side="left">
-                          {!isModerator(memberRef.current?.role) && ( // Show role options only for non-moderators
+                          {!isModerator(memberRef.current?.role as MemberRole) && ( // Show role options only for non-moderators
                             <>
                               <DropdownMenuSub>
                                 <DropdownMenuSubTrigger className="flex items-center">

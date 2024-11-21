@@ -57,13 +57,13 @@ const EditChannelModel = () => {
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: "",
-            type: channel?.type || ChannelType.TEXT
+            type: ChannelType.TEXT
         }
     })
     useEffect(() => {
         if (channel) {
             form.setValue("name", channel.name);
-            form.setValue("type", channel.type);
+            form.setValue("type", channel.type as ChannelType);
         }
     }, [form, channel])
 

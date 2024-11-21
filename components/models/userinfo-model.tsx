@@ -13,15 +13,16 @@ interface UserInfoModelProps {
     isOpen: boolean;
     onClose: () => void;
     memberProfile: MemberWithProfiles | null; // Profile data passed as prop
-    currentUser: Member | MemberWithProfiles | undefined
+    currentUser: MemberWithProfiles | undefined | null
 }
 
-const roleIconMap = {
-    GUEST: null,
-    MODERATOR: <ShieldCheck className="h-4 w-4 ml-2 text-indigo-500" />,
-    ADMIN: <ShieldAlert className="h-4 w-4 text-rose-500" />,
-    CREATOR: <Crown className="h-4 w-4 text-yellow-500" />
-};
+// Define roleIconMap with proper typing
+const roleIconMap: Record<MemberRole, JSX.Element | null> = {
+    [MemberRole.GUEST]: null,
+    [MemberRole.MODERATOR]: <ShieldCheck className="h-4 w-4 ml-2 text-indigo-500" />,
+    [MemberRole.ADMIN]: <ShieldAlert className="h-4 w-4 text-rose-500" />,
+    [MemberRole.CREATOR]: <Crown className="h-4 w-4 text-yellow-500" />,
+  };
 
 const UserInfoModel: React.FC<UserInfoModelProps> = ({ isOpen, onClose, memberProfile, currentUser }) => {
     // Function to determine if the current user can see the member ID
@@ -65,7 +66,7 @@ const UserInfoModel: React.FC<UserInfoModelProps> = ({ isOpen, onClose, memberPr
                             <p><strong className="text-red-500">Email:</strong> {memberProfile?.profile?.email || "*NOT FOUND*"}</p>
                             <div className="flex items-center">
                                 <p className="mr-2" ><strong className="text-red-500">Role:</strong> {memberProfile?.role || "*NOT FOUND*"}</p>
-                                {roleIconMap[memberProfile.role]} {/* Render the icon here */}
+                                {roleIconMap[memberProfile.role as MemberRole]} {/* Render the icon here */}
                             </div>        
                             <p><strong className="text-red-500">Current Status:</strong> {memberProfile?.profile?.status || "*NOT FOUND*"}</p>
                                                

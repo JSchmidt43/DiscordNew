@@ -13,23 +13,18 @@ import {
 import { Button } from "../ui/button";
 import { ShieldAlert, ShieldCheck, Crown } from "lucide-react";
 import { formatDate } from "@/convex/utils/formatDate";
-import { Member } from "@/types";
+import { Member, MemberRole, roleHierarchy } from "@/types";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
-const roleHierarchy = {
-    GUEST: 0,
-    MODERATOR: 1,
-    ADMIN: 2,
-    CREATOR: 3,
-};
 
-const roleIconMap = {
-    MODERATOR: <ShieldCheck className="w-5 h-5 text-indigo-500" />,
-    ADMIN: <ShieldAlert className="w-5 h-5 text-red-500" />,
-    CREATOR: <Crown className="w-5 h-5 text-yellow-500" />,
-    GUEST: null,
-};
+// Define roleIconMap with proper typing
+const roleIconMap: Record<MemberRole, JSX.Element | null> = {
+    [MemberRole.GUEST]: null,
+    [MemberRole.MODERATOR]: <ShieldCheck className="h-4 w-4 ml-2 text-indigo-500" />,
+    [MemberRole.ADMIN]: <ShieldAlert className="h-4 w-4 text-rose-500" />,
+    [MemberRole.CREATOR]: <Crown className="h-4 w-4 text-yellow-500" />,
+  };
 
 const ReportModel = () => {
     const { isOpen, onClose, type, data } = useModel();
@@ -149,7 +144,7 @@ const ReportModel = () => {
                                 Offender
                             </h3>
                             <div className="flex items-center gap-2">
-                                {roleIconMap[reportData.report.reportedMemberRole] || <span></span>}
+                                {roleIconMap[reportData.report.reportedMemberRole as MemberRole] || <span></span>}
                                 <span className="text-gray-800 dark:text-gray-200">
                                     {offender.profile?.username || "Unknown"}
                                 </span>

@@ -1,11 +1,11 @@
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { MemberRole, roleHierarchy } from "@/types";
+import { MemberRole } from "@/types";
 import { UserAvatar } from "../user-avatar";
 import { Crown, Edit, FileIcon, ShieldAlert, ShieldCheck, Trash } from "lucide-react";
 import Image from "next/image";
-import { act, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -29,7 +29,7 @@ interface ChatItemProps {
   action?: string;
 }
 
-const roleIconMap = {
+const roleIconMap: Record<string, JSX.Element | null> = {
   GUEST: null,
   MODERATOR: <ShieldCheck className="w-4 h-4 ml-2 text-indigo-500" />,
   ADMIN: <ShieldAlert className="w-4 h-4 ml-2 text-rose-500" />,
@@ -60,7 +60,7 @@ export const ChatItem = ({
   const [imageFailed, setImageFailed] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState<MemberWithProfiles | null>(null); // Selected profile data
 
-  const memberRef = useRef(null);
+  const memberRef = useRef<MemberWithProfiles | null | undefined>(null);
 
   const profile = useQuery(api.profiles.getProfileByMemberId, {
     memberId: deletionActor || '', // Default to empty string if undefined
@@ -137,7 +137,7 @@ export const ChatItem = ({
   };
 
   // Handle opening the user info dialog
-  const handleOpenUserInfo = (member: MemberWithProfiles) => {
+  const handleOpenUserInfo = (member: any) => {
     setSelectedProfile(member); // Set the selected profile
     setUserInfoOpen(true); // Open the dialog
   };
@@ -176,7 +176,7 @@ export const ChatItem = ({
                       {username || "User not found"}
                     </span>
                   </p>
-                  {roleIconMap[member?.role]}
+                  {roleIconMap[member?.role as keyof typeof roleIconMap] || null}
                 </>
               )}
             </div>
@@ -241,7 +241,7 @@ export const ChatItem = ({
                 >
                   <Image
                     src={fileUrl}
-                    alt={content}
+                    alt={content ?? `${fileUrl}`}
                     fill
                     className="object-cover"
                     onError={onImageError}

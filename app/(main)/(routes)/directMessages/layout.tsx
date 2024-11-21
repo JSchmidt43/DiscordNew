@@ -1,10 +1,6 @@
 import DirectMessageSidebar from "@/components/directMessages/direct-message-sidebar";
-import ServerSidebar from "@/components/servers/server-sidebar";
-import { api } from "@/convex/_generated/api";
 import { currentProfile } from "@/lib/current-profile";
 import { auth } from "@clerk/nextjs/server";
-import { fetchQuery } from "convex/nextjs";
-import { redirect } from "next/navigation";
 
 const DirectMsgIdLayout = async ({
     children,

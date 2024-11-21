@@ -62,7 +62,6 @@ const MessageFileModel = () => {
             const messageData = {
                 content : values.fileUrl,
                 memberId : fileData?.memberId!,
-                username: fileData?.username!,
                 channelId: fileData?.channelId!,
                 fileUrl: values.fileUrl
             }

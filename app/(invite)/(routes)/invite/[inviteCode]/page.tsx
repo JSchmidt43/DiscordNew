@@ -42,7 +42,7 @@ const InviteCodePage = async ({
 
     if(createdMember.data){
         const memberProfile = (await fetchQuery(api.profiles.getProfileById, { profileId: createdMember.data.profileId}))?.data
-        const systemMessage = await fetchMutation(api.systemMessages.createMessage, {
+        await fetchMutation(api.systemMessages.createMessage, {
             action: "JOIN",
             content: `${memberProfile?.username} joined the server.`,
             serverId: createdMember.data.serverId,

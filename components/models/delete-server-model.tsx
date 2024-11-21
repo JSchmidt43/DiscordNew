@@ -35,7 +35,7 @@ const DeleteServerModel = () => {
         (member: Member) => member.role === MemberRole.CREATOR
       );
       if (adminRole) {
-        const adminNameForDeleteServer = adminRole.profile.username;
+        const adminNameForDeleteServer = adminRole?.profile?.username;
         const requiredText = `${adminNameForDeleteServer}/${server.name}`;
         setConfirmDeletionText(requiredText);
       }

@@ -4,15 +4,15 @@ import { cn } from "@/lib/utils";
 import { Crown, ShieldAlert, ShieldCheck } from "lucide-react";
 import { useParams } from "next/navigation";
 import { UserAvatar } from "../user-avatar";
-import { Member, MemberRole, Profile, Server } from "@/types";
+import { Member, MemberRole, Profile, Server, ServerWithChannelsWithMembers } from "@/types";
 
 interface ServerMemberProps {
     member: Member & { profile: Profile };
-    server: Server;
+    server: ServerWithChannelsWithMembers;
 }
 
 // Mapping roles to icons and titles for tooltips
-const roleIconMap = {
+const roleIconMap : Record<MemberRole, { icon: JSX.Element | null; title: string }> = {
     [MemberRole.GUEST]: { icon: null, title: "" },
     [MemberRole.MODERATOR]: { icon: <ShieldCheck className="h-4 w-4 text-indigo-500" />, title: "Moderator" },
     [MemberRole.ADMIN]: { icon: <ShieldAlert className="h-4 w-4 text-rose-500" />, title: "Admin" },
@@ -25,7 +25,8 @@ export const ServerMember = ({
 }: ServerMemberProps) => {
     const params = useParams();
 
-    const { icon: Icon, title } = roleIconMap[member.role];
+    const role = member.role as MemberRole;
+    const { icon: Icon, title } = roleIconMap[role] || { icon: null, title: "Unknown" };
 
     return (
         <div

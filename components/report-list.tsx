@@ -20,14 +20,14 @@ const ReportsList: React.FC<ReportsListProps> = ({ serverId, memberId }) => {
             ? api.reports.getReportsByMemberId
             : api.reports.getReportsByStautsAndServerId,
         {
-            serverId: activeTab !== "myReports" ? serverId : undefined,
-            status: activeTab === "unsolved" ? "unsolved" : activeTab === "solved" ? "solved" : undefined,
+            serverId: activeTab !== "myReports" ? serverId : "",
+            status: activeTab === "unsolved" ? "unsolved" : activeTab === "solved" ? "solved" : "",
             reporterId: activeTab === "myReports" ? memberId : undefined,
         }
     )?.data;
 
-    const membersWithProfiles = useQuery(api.servers.getServerWithMembersAndChannelsByServerId, { serverId })?.data?.members;
-
+    const membersWithProfiles = useQuery(api.servers.getServerWithMembersAndChannelsByServerId, { serverId })?.data?.members || [];
+    
     const currentMember = membersWithProfiles?.find((member) => member._id === memberId);
 
     // Sort and Group Reports

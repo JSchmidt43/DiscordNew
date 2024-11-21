@@ -143,7 +143,7 @@ export const DirectChatItem = ({
               >
                 <Image
                   src={fileUrl}
-                  alt={content}
+                  alt={content ?? `${fileUrl}`}
                   fill
                   className="object-cover"
                   onError={onImageError}

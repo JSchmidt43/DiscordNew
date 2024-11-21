@@ -1,6 +1,6 @@
 "use client"
 
-import { MemberRole, ServerWithChannelsWithMembers, ServerWithMembersWithProfiles } from "@/types";
+import { MemberRole, Server, ServerWithChannelsWithMembers } from "@/types";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Ban, ChevronDown, LogOut, PlusCircle, Settings, Trash, UserPlus, Users } from "lucide-react";
 import { useModel } from "@/hooks/use-model-store";
