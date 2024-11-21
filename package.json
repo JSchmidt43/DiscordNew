@@ -42,6 +42,7 @@
     "lucide-react": "^0.453.0",
     "next": "14.2.15",
     "next-themes": "^0.3.0",
+    "ngrok": "^5.0.0-beta.2",
     "query-string": "^9.1.1",
     "react": "^18",
     "react-dom": "^18",
