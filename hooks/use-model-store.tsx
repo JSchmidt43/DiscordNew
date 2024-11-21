@@ -4,7 +4,7 @@ import { create } from "zustand"
 export type ModelType = "createServer" | "invite" | "editServer" 
 | "members" | "createChannel" | "leaveServer" | "deleteServer"
 | "deleteChannel" | "editChannel" | "messageFile" | "deleteMessage" | "joinServer"
- | "serverChoice" | "deleteDirectMessage" | "directMessageFile" | "createReport" | "deleteReport" | "report";
+ | "serverChoice" | "deleteDirectMessage" | "directMessageFile" | "createReport" | "deleteReport" | "report" | "deleteFriend";
 
 interface ModelData {
     server?: ServerWithChannelsWithMembers;
@@ -15,6 +15,10 @@ interface ModelData {
         members: MemberWithProfiles[]
     };
     channelType?: ChannelType,
+    friend?: {
+        friendshipId: string,
+        name: string
+    },
     fileData?: {
         username: string,
         channelId: string,

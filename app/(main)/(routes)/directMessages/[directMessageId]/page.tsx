@@ -29,6 +29,8 @@ const DirectMessageIdPage = async ({
         name={getReceiverProfile?.username || "Unknown"}
         type='conversation'
         imageUrl={getReceiverProfile?.imageUrl}
+        friendshipId={params.directMessageId}
+        profile={profile}
       />
       <DirectChatMessage
           name={getReceiverProfile?.username || "Unknown"}

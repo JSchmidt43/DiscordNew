@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getProfileById } from "./profiles";
+import { deleteAllMessagesByFriendshipId } from "./directMessages";
 
 export const sendFriendRequest = mutation({
   args: {
@@ -118,8 +119,6 @@ export const deleteFriendRequestById = mutation({
   },
 });
 
-
-
 export const deleteFriend = mutation({
   args: {
     requestId: v.string(), // Use requestId as the parameter
@@ -135,6 +134,8 @@ export const deleteFriend = mutation({
 
     // Delete the friend request
     await ctx.db.delete(friendRequest._id);
+
+    await deleteAllMessagesByFriendshipId(ctx, { friendshipId: friendRequest._id})
 
     return { data: null, message: 'Friend relationship deleted.' };
   },
@@ -310,6 +311,15 @@ export const getFirstAcceptedFriendByProfileId = query({
   },
 });
 
+export const getAllDatasFromFriendsTable= query({
+  args: {}, // No arguments needed
+  handler: async (ctx) => {
+    // Query the entire `friends` table and collect all records
+    const allItems = await ctx.db.query("friends").collect(); 
 
+    // Return the collected items
+    return { data: allItems, message: "All items fetched successfully." };
+  },
+});
 
 

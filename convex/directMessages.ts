@@ -146,3 +146,23 @@ export const getAllMessageBySenderAndReceiver = query({
     },
 });
   
+export const deleteAllMessagesByFriendshipId = mutation({
+  args: {
+    friendshipId: v.string(), // The friendship ID whose messages need to be deleted
+  },
+  handler: async (ctx, { friendshipId }) => {
+    // Query the database for messages associated with the friendship ID
+    const messages = await ctx.db.query('directMessages')
+      .filter(q => q.eq(q.field('friendshipId'), friendshipId))
+      .collect();
+
+    if (messages.length === 0) {
+      return { data: null, error: "No messages found for the given friendship ID." };
+    }
+
+    // Delete all messages associated with the friendship ID
+    await Promise.all(messages.map(message => ctx.db.delete(message._id)));
+
+    return { data: null, message: `${messages.length} messages deleted successfully.` };
+  },
+});

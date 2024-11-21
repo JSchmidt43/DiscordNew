@@ -196,7 +196,7 @@ const ProfileDialogContent = ({profile } : any) => {
                                 <FriendRequest key={request._id} request={request} />
                             ))
                         ) : (
-                            <p className="text-sm">No friend requests.</p>
+                            <p className="text-sm mb-4">No friend requests.</p>
                         )}
                    </div>
                 </DialogContent>

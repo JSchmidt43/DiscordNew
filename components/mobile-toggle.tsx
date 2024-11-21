@@ -10,12 +10,14 @@ import ServerSidebar from "./servers/server-sidebar"
 import { currentProfile } from "@/lib/current-profile"
 import DirectMessageSidebar from "./directMessages/direct-message-sidebar"
 import { DialogTitle } from "@radix-ui/react-dialog"
+import { Profile } from "@/types"
 
-export const MobileToggle = async ({
+export const MobileToggle = ({
     serverId,
-}: { serverId?: string}) =>  {
+    profile
+}: { serverId?: string, profile?: Profile}) =>  {
 
-    const profile = await currentProfile();
+    // const profile = await currentProfile();
 
     // Determine which sidebar to render based on the available ID
     const renderSidebar = () => {
