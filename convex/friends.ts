@@ -90,9 +90,35 @@ export const declineFriendRequest = mutation({
       updatedAt: Date.now(),
     });
 
+    await deleteFriendRequestById(ctx, { requestId})
+
     return { data: friendRequest, message: 'Friend request declined.' };
   },
 });
+
+export const deleteFriendRequestById = mutation({
+  args: {
+    requestId: v.string(), // The unique ID of the friend request to delete
+  },
+  handler: async (ctx, { requestId }) => {
+    // Query the database to find the friend request by ID
+    const friendRequest = await ctx.db.query('friends')
+      .filter(q => q.eq(q.field('_id'), requestId))
+      .first();
+
+    // If no friend request found, return an error
+    if (!friendRequest) {
+      return { data: null, error: "Friend request not found." };
+    }
+
+    // Delete the friend request
+    await ctx.db.delete(friendRequest._id);
+
+    return { data: null, message: "Friend request deleted successfully." };
+  },
+});
+
+
 
 export const deleteFriend = mutation({
   args: {
