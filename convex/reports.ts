@@ -131,7 +131,9 @@ export const getReportById = query({
 
 export const getReportsByMemberId = query({
     args: {
-        reporterId: v.string()
+        reporterId: v.string(),
+        serverId: v.optional(v.string()),
+        status: v.optional(v.string()),
     },
     handler: async (ctx, { reporterId }) => {
         const reports = await ctx.db.query('reports')
@@ -141,7 +143,7 @@ export const getReportsByMemberId = query({
     },
 });
 
-export const getReportsByStautsAndServerId = query({
+export const getReportsByStatusAndServerId = query({
     args: {
         status: v.string(),
         serverId: v.string()

@@ -18,7 +18,7 @@ const ReportsList: React.FC<ReportsListProps> = ({ serverId, memberId }) => {
     const reports = useQuery(
         activeTab === "myReports"
             ? api.reports.getReportsByMemberId
-            : api.reports.getReportsByStautsAndServerId,
+            : api.reports.getReportsByStatusAndServerId,
         {
             serverId: activeTab !== "myReports" ? serverId : "",
             status: activeTab === "unsolved" ? "unsolved" : activeTab === "solved" ? "solved" : "",
